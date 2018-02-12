@@ -22,30 +22,30 @@
                             { "caption": "-" },
                             {
                                 "command": "open_file",
-                                "args": {"file": "${packages}/sublime_diagram_plugin/README.md"},
+                                "args": {"file": "${packages}/PlantUmlDiagrams/README.md"},
                                 "caption": "README"
                             },
                             {
                                 "command": "open_file",
-                                "args": {"file": "${packages}/sublime_diagram_plugin/samples/EXAMPLE.wsd"},
+                                "args": {"file": "${packages}/PlantUmlDiagrams/samples/EXAMPLE.wsd"},
                                 "caption": "EXAMPLE"
                             },
                             { "caption": "-" },
                             {
                                 "command": "open_file",
-                                "args": {"file": "${packages}/sublime_diagram_plugin/Diagram.sublime-settings"},
+                                "args": {"file": "${packages}/PlantUmlDiagrams/PlantUmlDiagrams.sublime-settings"},
                                 "caption": "Settings – Default"
                             },
                             {
                                 "command": "open_file",
-                                "args": {"file": "${packages}/User/Diagram.sublime-settings"},
+                                "args": {"file": "${packages}/User/PlantUmlDiagrams.sublime-settings"},
                                 "caption": "Settings – User"
                             },
                             { "caption": "-" },
                             {
                                 "command": "open_file",
                                 "args": {
-                                    "file": "${packages}/sublime_diagram_plugin/Default (OSX).sublime-keymap",
+                                    "file": "${packages}/PlantUmlDiagrams/Default (OSX).sublime-keymap",
                                     "platform": "OSX"
                                 },
                                 "caption": "Key Bindings – Default"
@@ -53,7 +53,7 @@
                             {
                                 "command": "open_file",
                                 "args": {
-                                    "file": "${packages}/sublime_diagram_plugin/Default (Linux).sublime-keymap",
+                                    "file": "${packages}/PlantUmlDiagrams/Default (Linux).sublime-keymap",
                                     "platform": "Linux"
                                 },
                                 "caption": "Key Bindings – Default"
@@ -61,7 +61,7 @@
                             {
                                 "command": "open_file",
                                 "args": {
-                                    "file": "${packages}/sublime_diagram_plugin/Default (Windows).sublime-keymap",
+                                    "file": "${packages}/PlantUmlDiagrams/Default (Windows).sublime-keymap",
                                     "platform": "Windows"
                                 },
                                 "caption": "Key Bindings – Default"
