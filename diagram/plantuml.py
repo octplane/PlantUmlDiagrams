@@ -7,12 +7,17 @@ from os.path import abspath, dirname, exists, join, splitext, basename
 from tempfile import NamedTemporaryFile
 from sublime import platform, load_settings
 
+import os
 import sys
+import subprocess
+
 if sys.version_info < (3,0):
-    import os
     DEVNULL = open(os.devnull, 'wb')
 else:
     from subprocess import DEVNULL
+
+if os.name == 'nt':
+    from ctypes import windll, create_unicode_buffer
 
 IS_MSWINDOWS = (platform() == 'windows')
 CREATE_NO_WINDOW = 0x08000000  # See MSDN, http://goo.gl/l4OKNe
@@ -42,16 +47,27 @@ class PlantUMLDiagram(BaseDiagram):
         """
         cwd = getcwd()
         if self.workDir:
-            print ('chdir to:', self.workDir)
-            chdir(self.workDir)
+            cwd = self.workDir
+            print ('workDir:', self.workDir)
 
-        try:
-            return self._generate()
-        finally:
-            if self.workDir:
-                chdir(cwd)
+        startupinfo = None
 
-    def _generate(self):
+        if os.name == 'nt':
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
+            # Make sure the cwd is ascii
+            try:
+                cwd.encode('mbcs')
+
+            except UnicodeEncodeError:
+                buf = create_unicode_buffer(512)
+                if windll.kernel32.GetShortPathNameW(cwd, buf, len(buf)):
+                    cwd = buf.value
+
+        return self._generate(cwd, startupinfo)
+
+    def _generate(self, cwd, startupinfo):
         command = [
             'java',
             '-DPLANTUML_LIMIT_SIZE=50000',
@@ -71,16 +87,31 @@ class PlantUMLDiagram(BaseDiagram):
 
         puml = execute(
             command,
-            stdin=PIPE, stdout=self.file, stderr=DEVNULL,
+            stdin=PIPE,
+            stdout=self.file,
+            stderr=PIPE,
+            startupinfo=startupinfo,
+            cwd=cwd,
+            env=os.environ,
             **EXTRA_CALL_ARGS
         )
-        puml.communicate(input=self.text.encode('UTF-8'))
+        output = puml.communicate(input=self.text.encode('UTF-8'))
+
         if puml.returncode != 0:
-            print("Error Processing Diagram:")
+            new_data = []
+
+            for data in output:
+
+                if data:
+                    data = data.decode('UTF-8')
+                    data = data.replace('\r\n', '\n').rstrip(' \n\r')
+                    new_data.append(data)
+
             print(self.text)
+            print("Error Processing Diagram:", ''.join(new_data))
             return
-        else:
-            return self.file
+
+        return self.file
 
 
 class PlantUMLProcessor(BaseProcessor):

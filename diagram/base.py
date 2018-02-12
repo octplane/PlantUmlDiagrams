@@ -29,7 +29,7 @@ class BaseProcessor(object):
                 rendered = diagram.generate()
                 diagrams.append(rendered)
             except Exception as e:
-                print("Error processing diagram: %r" % e)
+                print("Error rendering diagram for block: %r" % e)
                 print(repr(block))
         return diagrams
 
