@@ -3,9 +3,9 @@ from .base import BaseDiagram
 from .base import BaseProcessor
 from subprocess import Popen as execute, PIPE, STDOUT, call
 from os import getcwd, chdir
-from os.path import abspath, dirname, exists, join, splitext
+from os.path import abspath, dirname, exists, join, splitext, basename
 from tempfile import NamedTemporaryFile
-from sublime import platform
+from sublime import platform, load_settings
 
 import sys
 if sys.version_info < (3,0):
@@ -85,15 +85,12 @@ class PlantUMLDiagram(BaseDiagram):
 
 class PlantUMLProcessor(BaseProcessor):
     DIAGRAM_CLASS = PlantUMLDiagram
-    PLANTUML_VERSION = 8054
-    PLANTUML_VERSION_STRING = 'PlantUML version 1.2017.19'
 
     def load(self):
         self.check_dependencies()
         self.find_plantuml_jar()
 
         if self.CHECK_ON_STARTUP:
-            self.check_plantuml_version()
             self.check_plantuml_functionality()
 
     def check_dependencies(self):
@@ -129,7 +126,7 @@ class PlantUMLProcessor(BaseProcessor):
             raise Exception('PlantUML does not appear functional')
 
     def find_plantuml_jar(self):
-        self.plantuml_jar_file = 'plantuml-%s.jar' % (self.PLANTUML_VERSION,)
+        self.plantuml_jar_file = 'plantuml.jar'
         self.plantuml_jar_path = None
 
         self.plantuml_jar_path = abspath(
@@ -138,8 +135,15 @@ class PlantUMLProcessor(BaseProcessor):
                 self.plantuml_jar_file
             )
         )
+
         if not exists(self.plantuml_jar_path):
-            raise Exception("can't find " + self.plantuml_jar_file)
+            sublime_settings = load_settings("PlantUmlDiagrams.sublime-settings")
+            self.plantuml_jar_path = abspath(sublime_settings.get('jar_file'))
+            self.plantuml_jar_file = basename(self.plantuml_jar_path)
+
+            if not exists(self.plantuml_jar_path):
+                raise Exception("can't find " + self.plantuml_jar_file)
+
         print("Detected %r" % (self.plantuml_jar_path,))
 
     def check_plantuml_version(self):
@@ -164,8 +168,6 @@ class PlantUMLProcessor(BaseProcessor):
 
         if not puml.returncode == 0:
             raise Exception("PlantUML returned an error code")
-        if self.PLANTUML_VERSION_STRING not in str(version_output):
-            raise Exception("error verifying PlantUML version")
 
     def extract_blocks(self, view):
 		# If any Region is selected - trying to convert it, otherwise converting all @start-@end blocks in view

@@ -1,7 +1,17 @@
 {
-  // restart sublime to apply the changes
-	"viewer" : "Preview", // Preview, QuickLook, EyeOfGnome, WindowsDefaultViewer
-	"check_on_startup": true,
-  "new_file":false, // generate new file each time
-	"charset": null // Can be "UTF-8" - to support non-latin text in diagram
+    // restart sublime to apply the changes
+    //
+    // Preview, QuickLook, EyeOfGnome, WindowsDefaultViewer
+    "viewer" : "Preview",
+
+    "check_on_startup": true,
+
+    // generate new file each time
+    "new_file":false,
+
+    // The full path to the plantuml.jar file
+    "jar_file": "C:/Users/plantuml.jar",
+
+    // Can be "UTF-8" - to support non-latin text in diagram
+    "charset": null
 }

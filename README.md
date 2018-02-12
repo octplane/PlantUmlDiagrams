@@ -15,7 +15,7 @@ automatically overwritten, but not removed.
 
 If you wish to override the viewer used, disable start-time sanity checks, or
 change the default character set for diagram files, create a user version of
-Diagram.sublime-settings file in the usual way.
+PlantUmlDiagrams.sublime-settings file in the usual way.
 
 ## Install
 
@@ -40,6 +40,12 @@ Viewers (in order of preference):
 * Eye of Gnome
 
 Patches to support additional viewers or diagrams are welcome.
+
+See also:
+1. http://plantuml.com/sitemap-language-specification
+1. https://github.com/qjebbs/vscode-plantuml
+1. https://github.com/plantuml/plantuml-server
+
 
 ## Install Instructions
 

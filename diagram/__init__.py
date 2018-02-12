@@ -31,7 +31,7 @@ def setup():
     ACTIVE_PROCESSORS = []
     ACTIVE_VIEWER = None
 
-    sublime_settings = load_settings("Diagram.sublime-settings")
+    sublime_settings = load_settings("PlantUmlDiagrams.sublime-settings")
     print("Viewer Setting: " + sublime_settings.get("viewer"))
 
     for processor in AVAILABLE_PROCESSORS:
@@ -44,9 +44,8 @@ def setup():
             proc.load()
             ACTIVE_PROCESSORS.append(proc)
             print("Loaded processor: %r" % proc)
-        except Exception:
-            print("Unable to load processor: %r" % processor)
-            sys.excepthook(*sys.exc_info())
+        except Exception as error:
+            print("Unable to load processor: %r, %s" % (processor, error))
     if not ACTIVE_PROCESSORS:
         raise Exception('No working processors found!')
 
@@ -59,9 +58,8 @@ def setup():
                 ACTIVE_VIEWER = vwr
                 print("Loaded viewer: %r" % vwr)
                 break
-            except Exception:
-                print("Unable to load configured viewer, falling back to autodetection...")
-                sys.excepthook(*sys.exc_info())
+            except Exception as error:
+                print("Unable to load configured viewer, falling back to autodetection... %s" % error)
 
     if ACTIVE_VIEWER is None:
         for viewer in AVAILABLE_VIEWERS:
