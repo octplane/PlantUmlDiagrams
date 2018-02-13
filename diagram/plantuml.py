@@ -69,6 +69,7 @@ class PlantUMLDiagram(BaseDiagram):
                 self.file = open(self.sourceFile, 'wb')
 
     def __del__(self):
+        super( PlantUMLDiagram, self ).__del__()
         self.file.close()
 
     def generate(self):
