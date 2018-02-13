@@ -27,7 +27,7 @@ CREATE_NO_WINDOW = 0x08000000  # See MSDN, http://goo.gl/l4OKNe
 EXTRA_CALL_ARGS = {'creationflags': CREATE_NO_WINDOW, 'shell': True} if IS_MSWINDOWS else {}
 
 class PlantUMLDiagram(BaseDiagram):
-    def __init__(self, processor, sourceFile, text):
+    def __init__(self, processor, sourceFile, text, sequence=0):
         super(PlantUMLDiagram, self).__init__(processor, sourceFile, text)
 
         self.workDir = None
@@ -38,10 +38,11 @@ class PlantUMLDiagram(BaseDiagram):
             sourceDir = dirname(sourceFile)
             if exists(sourceDir):
                 self.workDir = sourceDir
-            if self.proc.NEW_FILE:
+            if self.uml_processor.NEW_FILE:
                 self.file = NamedTemporaryFile(prefix=sourceFile, suffix='.png', delete=False)
             else:
-                sourceFile = splitext(sourceFile)[0] + '.png'
+                sequence = str(sequence) if sequence else ""
+                sourceFile = splitext(sourceFile)[0] + sequence + '.png'
                 self.file = open(sourceFile, 'wb')
 
     def generate(self):
@@ -75,14 +76,14 @@ class PlantUMLDiagram(BaseDiagram):
             'java',
             '-DPLANTUML_LIMIT_SIZE=50000',
             '-jar',
-            self.proc.plantuml_jar_path,
+            self.uml_processor.plantuml_jar_path,
             '-pipe',
             '-tpng',
             '-charset',
             'UTF-8'
         ]
 
-        charset = self.proc.CHARSET
+        charset = self.uml_processor.CHARSET
         if charset:
             print('using charset: ' + charset)
             command.append("-charset")

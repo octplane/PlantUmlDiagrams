@@ -2,7 +2,7 @@
 
 class BaseDiagram(object):
     def __init__(self, processor, sourceFile, text):
-        self.proc = processor
+        self.uml_processor = processor
         self.text = text
         self.sourceFile = sourceFile
 
@@ -22,12 +22,13 @@ class BaseProcessor(object):
     def extract_blocks(self, view):
         raise NotImplementedError('abstract base class is abstract')
 
-    def process(self, sourceFile, text_blocks):
+    def process(self, sourceFile, text_blocks, sequence):
         diagrams = []
+
         for block in text_blocks:
             try:
-                print("Rendering diagram for block: %r" % block)
-                diagram = self.DIAGRAM_CLASS(self, sourceFile, block)
+                print("Rendering diagram for block...", sequence[0])
+                diagram = self.DIAGRAM_CLASS(self, sourceFile, block, sequence[0])
                 rendered = diagram.generate()
                 diagrams.append(rendered)
             except Exception as e:
@@ -35,6 +36,7 @@ class BaseProcessor(object):
                 print("Error rendering diagram for block: %r" % e)
                 sys.excepthook(*sys.exc_info())
                 diagram.file.close()
+            sequence[0] += 1
 
         return diagrams
 

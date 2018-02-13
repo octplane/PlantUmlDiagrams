@@ -20,33 +20,33 @@ AVAILABLE_VIEWERS = [
     FreedesktopDefaultViewer,
     WindowsDefaultViewer,
 ]
-ACTIVE_PROCESSORS = []
+ACTIVE_UML_PROCESSORS = []
 ACTIVE_VIEWER = None
 
 def setup():
     global INITIALIZED
-    global ACTIVE_PROCESSORS
+    global ACTIVE_UML_PROCESSORS
     global ACTIVE_VIEWER
 
-    ACTIVE_PROCESSORS = []
+    ACTIVE_UML_PROCESSORS = []
     ACTIVE_VIEWER = None
 
     sublime_settings = load_settings("PlantUmlDiagrams.sublime-settings")
     print("Viewer Setting: " + sublime_settings.get("viewer"))
 
-    for processor in AVAILABLE_PROCESSORS:
+    for plantuml_processor in AVAILABLE_PROCESSORS:
         try:
-            print("Loading processor class: %r" % processor)
-            proc = processor()
+            print("Loading plantuml_processor class: %r" % plantuml_processor)
+            proc = plantuml_processor()
             proc.CHARSET = sublime_settings.get('charset')
             proc.CHECK_ON_STARTUP = sublime_settings.get('check_on_startup')
             proc.NEW_FILE = sublime_settings.get('new_file')
             proc.load()
-            ACTIVE_PROCESSORS.append(proc)
-            print("Loaded processor: %r" % proc)
+            ACTIVE_UML_PROCESSORS.append(proc)
+            print("Loaded plantuml_processor: %r" % proc)
         except Exception as error:
-            print("Unable to load processor: %r, %s" % (processor, error))
-    if not ACTIVE_PROCESSORS:
+            print("Unable to load plantuml_processor: %r, %s" % (plantuml_processor, error))
+    if not ACTIVE_UML_PROCESSORS:
         raise Exception('No working processors found!')
 
     for viewer in AVAILABLE_VIEWERS:
@@ -79,46 +79,55 @@ def setup():
         raise Exception('No working viewers found!')
 
     INITIALIZED = True
-    print("Processors: %r" % ACTIVE_PROCESSORS)
+    print("Processors: %r" % ACTIVE_UML_PROCESSORS)
     print("Viewer: %r" % ACTIVE_VIEWER)
 
 
 def process(view):
     diagrams = []
 
-    for processor in ACTIVE_PROCESSORS:
-        blocks = []
+    for plantuml_processor in ACTIVE_UML_PROCESSORS:
+        text_blocks = []
 
-        for block in processor.extract_blocks(view):
+        for text_block in plantuml_processor.extract_blocks(view):
             add = False
-            for sel in view.sel():
-                if sel.intersects(block):
+
+            for selection in view.sel():
+
+                if selection.intersects(text_block):
                     add = True
                     break
-            else:  # if there are no selections, add all blocks
-                add = True
-            if add:
-                blocks.append(view.substr(block))
 
-        if blocks:
-            diagrams.append((processor, blocks, ))
+            else:  # if there are no selections, add all text_blocks
+                add = True
+
+            if add:
+                text_blocks.append(view.substr(text_block))
+
+        if text_blocks:
+            diagrams.append((plantuml_processor, text_blocks, ))
 
     if diagrams:
         sourceFile = view.file_name()
         t = Thread(target=render_and_view, args=(sourceFile, diagrams,))
+
         t.daemon = True
         t.start()
+
         return True
+
     else:
         return False
 
 
 def render_and_view(sourceFile, diagrams):
-    print("Rendering %r" % diagrams)
+    # print("Rendering %r" % diagrams)
+    sequence = [0]
     diagram_files = []
 
-    for processor, blocks in diagrams:
-        diagram_files.extend(processor.process(sourceFile, blocks))
+    for plantuml_processor, text_blocks in diagrams:
+        diagram_files.extend(plantuml_processor.process(sourceFile, text_blocks, sequence))
+        sequence[0] += 1
 
     if diagram_files:
         print("%r viewing %r" % (ACTIVE_VIEWER, [d.name for d in diagram_files if d]))
