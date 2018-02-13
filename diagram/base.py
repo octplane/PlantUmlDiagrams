@@ -35,7 +35,6 @@ class BaseProcessor(object):
                 print(repr(block))
                 print("Error rendering diagram for block: %r" % e)
                 sys.excepthook(*sys.exc_info())
-                diagram.file.close()
             sequence[0] += 1
 
         return diagrams

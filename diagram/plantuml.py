@@ -3,7 +3,7 @@ from .base import BaseDiagram
 from .base import BaseProcessor
 from subprocess import Popen as execute, PIPE, STDOUT, call
 from os import getcwd, chdir
-from os.path import abspath, dirname, exists, join, splitext, basename
+from os.path import abspath, dirname, exists, isdir, join, splitext, basename
 
 from tempfile import NamedTemporaryFile
 from sublime import platform, load_settings
@@ -26,42 +26,64 @@ IS_MSWINDOWS = (platform() == 'windows')
 CREATE_NO_WINDOW = 0x08000000  # See MSDN, http://goo.gl/l4OKNe
 EXTRA_CALL_ARGS = {'creationflags': CREATE_NO_WINDOW, 'shell': True} if IS_MSWINDOWS else {}
 
+# Support [png, svg, txt, utxt, latex] output image formats
+# https://github.com/jvantuyl/sublime_diagram_plugin/pull/59
+# https://github.com/jvantuyl/sublime_diagram_plugin/issues/47
+OUTPUT_FORMAT_DICT = \
+{
+    'png': '.png',
+    'svg': '.svg',
+    'txt': '.txt',
+    'utxt': '.utxt',
+    'pdf': '.pdf',
+    'vdx': '.vdx',
+    'eps': '.eps',
+    'latex': '.tex',
+    'latex:nopreamble': '.tex',
+}
+
+
 class PlantUMLDiagram(BaseDiagram):
     def __init__(self, processor, sourceFile, text, sequence=0):
         super(PlantUMLDiagram, self).__init__(processor, sourceFile, text)
 
-        self.workDir = None
-        if sourceFile is None:
-            self.file = NamedTemporaryFile(prefix='untitled', suffix='.png', delete=False)
+        self.sourceFile = sourceFile
+        self.output_format = self.uml_processor.OUTPUT_FORMAT
+        self.output_extension = OUTPUT_FORMAT_DICT.get(self.output_format, None)
+
+        if not self.output_extension:
+            raise Exception("Unsupported value '%s' for setting 'output_format': %s" % (
+                    self.output_format, self.output_extension))
+
+        if self.sourceFile is None:
+            self.file = NamedTemporaryFile(prefix='untitled', suffix=self.output_extension, delete=False)
+            self.sourceFile = self.file.name
 
         else:
-            sourceDir = dirname(sourceFile)
-            if exists(sourceDir):
-                self.workDir = sourceDir
+
             if self.uml_processor.NEW_FILE:
-                self.file = NamedTemporaryFile(prefix=sourceFile, suffix='.png', delete=False)
+                self.file = NamedTemporaryFile(prefix=self.sourceFile, suffix=self.output_extension, delete=False)
+
             else:
-                sequence = str(sequence) if sequence else ""
-                sourceFile = splitext(sourceFile)[0] + sequence + '.png'
-                self.file = open(sourceFile, 'wb')
+                self.sourceFile = "%s%s.%s" % (splitext(self.sourceFile)[0], str(sequence) if sequence else "", self.output_extension)
+                self.file = open(self.sourceFile, 'wb')
+
+    def __del__(self):
+        self.file.close()
 
     def generate(self):
         """
         Set the dir of sourceFile as working dir, otherwise plantuml could not include files correctly.
         """
-        cwd = getcwd()
-
-        if self.workDir:
-            cwd = self.workDir
-            print ('workDir:', self.workDir)
 
         try:
             sublime_settings = load_settings("PlantUmlDiagrams.sublime-settings")
-            self._generate_server(sublime_settings.get('plantuml_server', 'http://www.plantuml.com/plantuml/png/'))
+            server_url = sublime_settings.get('plantuml_server', 'http://www.plantuml.com/plantuml/')
+            self._generate_server( "%s/%s/" % (server_url.strip('/'), self.output_format))
 
         except Exception as error:
-            print("Failed to connect to the server: %s falling back to local rendering..." % error)
-            cwd, startupinfo = self._get_local_dir_info(cwd)
+            print("Failed to connect to the server: %s (%s) Falling back to local rendering..." % (error, server_url))
+            cwd, startupinfo = self._get_local_dir_info()
             self._generate_local(cwd, startupinfo)
 
         return self.file
@@ -72,22 +94,31 @@ class PlantUMLDiagram(BaseDiagram):
         self.file.write(content)
 
     def _generate_local(self, cwd, startupinfo):
+        """
+            http://en.plantuml.com/command-line
+        """
         command = [
             'java',
-            '-DPLANTUML_LIMIT_SIZE=50000',
+            '-DPLANTUML_LIMIT_SIZE=50000', # max output image height
             '-jar',
             self.uml_processor.plantuml_jar_path,
             '-pipe',
-            '-tpng',
-            '-charset',
-            'UTF-8'
+            '-t%s' % self.output_format,
         ]
 
         charset = self.uml_processor.CHARSET
+
         if charset:
-            print('using charset: ' + charset)
+            # print('using charset: ' + charset)
             command.append("-charset")
             command.append(charset)
+
+        else:
+            # print('using default charset: UTF-8')
+            command.append("-charset")
+            command.append('UTF-8')
+
+        # print("Command: %s" % (command))
 
         puml = execute(
             command,
@@ -115,7 +146,12 @@ class PlantUMLDiagram(BaseDiagram):
             print("Error Processing Diagram:", ''.join(new_data))
             return
 
-    def _get_local_dir_info(self, cwd):
+    def _get_local_dir_info(self):
+        cwd = dirname(self.sourceFile)
+
+        if not isdir(cwd):
+            cwd = getcwd()
+
         startupinfo = None
 
         if os.name == 'nt':
@@ -130,7 +166,6 @@ class PlantUMLDiagram(BaseDiagram):
                 buf = create_unicode_buffer(512)
                 if windll.kernel32.GetShortPathNameW(cwd, buf, len(buf)):
                     cwd = buf.value
-                self.file.close()
         return cwd, startupinfo
 
 

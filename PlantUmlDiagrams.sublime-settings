@@ -9,9 +9,24 @@
     // generate new file each time
     "new_file": false,
 
+    // valid values:
+    // 'png'              generate images using PNG format
+    // 'svg'              generate images using SVG format
+    // 'txt'              generate images with ASCII art
+    // 'utxt'             generate images with ASCII art using Unicode characters
+    // 'latex'            generate images using LaTeX/Tikz format
+    // 'latex:nopreamble' generate images using LaTeX/Tikz format without preamble
+    //
+    // These formats are also supported by plantUml, but they need some
+    // prerequisite to be installed... PlantUml return_code = 1 on invocation:
+    // 'pdf' generate images using PDF format
+    // 'vdx' generate images using VDX format
+    // 'eps' generate images using EPS format
+    "output_format": "png",
+
     // It will first try to use the server, because is much more faster than
     // calling directly the jar.
-    "plantuml_server": "http://www.plantuml.com/plantuml/png/",
+    "plantuml_server": "http://www.plantuml.com/plantuml/",
 
     // The full path to the plantuml.jar file
     "jar_file": "C:/Users/plantuml.jar",
