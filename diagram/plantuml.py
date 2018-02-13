@@ -65,7 +65,7 @@ class PlantUMLDiagram(BaseDiagram):
                 self.file = NamedTemporaryFile(prefix=self.sourceFile, suffix=self.output_extension, delete=False)
 
             else:
-                self.sourceFile = "%s%s.%s" % (splitext(self.sourceFile)[0], str(sequence) if sequence else "", self.output_extension)
+                self.sourceFile = "%s%s%s" % (splitext(self.sourceFile)[0], str(sequence) if sequence else "", self.output_extension)
                 self.file = open(self.sourceFile, 'wb')
 
     def __del__(self):
