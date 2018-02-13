@@ -25,7 +25,8 @@
     "output_format": "png",
 
     // It will first try to use the server, because is much more faster than
-    // calling directly the jar.
+    // calling directly the jar. If you would like to run a local server,
+    // you can install it from: https://github.com/plantuml/plantuml-server
     "plantuml_server": "http://www.plantuml.com/plantuml/",
 
     // The full path to the plantuml.jar file
