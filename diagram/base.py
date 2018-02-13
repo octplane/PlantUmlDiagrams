@@ -1,4 +1,6 @@
-﻿class BaseDiagram(object):
+﻿import sys
+
+class BaseDiagram(object):
     def __init__(self, processor, sourceFile, text):
         self.proc = processor
         self.text = text
@@ -29,8 +31,11 @@ class BaseProcessor(object):
                 rendered = diagram.generate()
                 diagrams.append(rendered)
             except Exception as e:
-                print("Error rendering diagram for block: %r" % e)
                 print(repr(block))
+                print("Error rendering diagram for block: %r" % e)
+                sys.excepthook(*sys.exc_info())
+                diagram.file.close()
+
         return diagrams
 
 

@@ -4,8 +4,11 @@ from .base import BaseProcessor
 from subprocess import Popen as execute, PIPE, STDOUT, call
 from os import getcwd, chdir
 from os.path import abspath, dirname, exists, join, splitext, basename
+
 from tempfile import NamedTemporaryFile
 from sublime import platform, load_settings
+
+import plantuml_connection
 
 import os
 import sys
@@ -39,35 +42,35 @@ class PlantUMLDiagram(BaseDiagram):
                 self.file = NamedTemporaryFile(prefix=sourceFile, suffix='.png', delete=False)
             else:
                 sourceFile = splitext(sourceFile)[0] + '.png'
-                self.file = open(sourceFile, 'w')
+                self.file = open(sourceFile, 'wb')
 
     def generate(self):
         """
         Set the dir of sourceFile as working dir, otherwise plantuml could not include files correctly.
         """
         cwd = getcwd()
+
         if self.workDir:
             cwd = self.workDir
             print ('workDir:', self.workDir)
 
-        startupinfo = None
+        try:
+            sublime_settings = load_settings("PlantUmlDiagrams.sublime-settings")
+            self._generate_server(sublime_settings.get('plantuml_server', 'http://www.plantuml.com/plantuml/png/'))
 
-        if os.name == 'nt':
-            startupinfo = subprocess.STARTUPINFO()
-            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        except Exception as error:
+            print("Failed to connect to the server: %s falling back to local rendering..." % error)
+            cwd, startupinfo = self._get_local_dir_info(cwd)
+            self._generate_local(cwd, startupinfo)
 
-            # Make sure the cwd is ascii
-            try:
-                cwd.encode('mbcs')
+        return self.file
 
-            except UnicodeEncodeError:
-                buf = create_unicode_buffer(512)
-                if windll.kernel32.GetShortPathNameW(cwd, buf, len(buf)):
-                    cwd = buf.value
+    def _generate_server(self, server_url):
+        plantumlserver = plantuml_connection.PlantUML(server_url)
+        content = plantumlserver.processes(self.text.encode('utf-8'))
+        self.file.write(content)
 
-        return self._generate(cwd, startupinfo)
-
-    def _generate(self, cwd, startupinfo):
+    def _generate_local(self, cwd, startupinfo):
         command = [
             'java',
             '-DPLANTUML_LIMIT_SIZE=50000',
@@ -111,7 +114,23 @@ class PlantUMLDiagram(BaseDiagram):
             print("Error Processing Diagram:", ''.join(new_data))
             return
 
-        return self.file
+    def _get_local_dir_info(self, cwd):
+        startupinfo = None
+
+        if os.name == 'nt':
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
+            # Make sure the cwd is ascii
+            try:
+                cwd.encode('mbcs')
+
+            except UnicodeEncodeError:
+                buf = create_unicode_buffer(512)
+                if windll.kernel32.GetShortPathNameW(cwd, buf, len(buf)):
+                    cwd = buf.value
+                self.file.close()
+        return cwd, startupinfo
 
 
 class PlantUMLProcessor(BaseProcessor):
