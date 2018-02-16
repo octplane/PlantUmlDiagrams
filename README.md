@@ -123,3 +123,18 @@ including:
 * Marcelo Da Cruz Pinto (Windows Viewer)
 * Peter Ertel (PEP8 Cleanup, Windows Improvements)
 * Juan Cabrera (Version Updates)
+
+
+## Reverse Engineering
+
+You can use the `pyreverse` plugin from the `pylint` module to generate class diagrams from the code.
+
+```
+pip install pylint
+pyreverse -o png -p DiagramName python_module_name
+```
+
+1. https://www.pylint.org/
+1. https://www.logilab.org/blogentry/6883
+1. https://pythonhosted.org/theape/documentation/developer/explorations/explore_graphs/explore_pyreverse.html
+
