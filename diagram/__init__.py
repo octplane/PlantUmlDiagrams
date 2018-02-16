@@ -32,11 +32,11 @@ def setup():
     ACTIVE_VIEWER = None
 
     sublime_settings = load_settings("PlantUmlDiagrams.sublime-settings")
-    print("Viewer Setting: " + sublime_settings.get("viewer"))
+    print("PlantUmlDiagrams Viewer Setting: " + sublime_settings.get("viewer"))
 
     for plantuml_processor in AVAILABLE_PROCESSORS:
         try:
-            print("Loading plantuml_processor class: %r" % plantuml_processor)
+            # print("Loading plantuml_processor class: %s" % plantuml_processor)
             proc = plantuml_processor()
             proc.CHARSET = sublime_settings.get('charset', None)
             proc.CHECK_ON_STARTUP = sublime_settings.get('check_on_startup', True)
@@ -44,44 +44,44 @@ def setup():
             proc.OUTPUT_FORMAT = sublime_settings.get('output_format', 'png')
             proc.load()
             ACTIVE_UML_PROCESSORS.append(proc)
-            print("Loaded plantuml_processor: %r" % proc)
+            print("Loaded plantuml_processor: %s" % proc)
         except Exception as error:
-            print("Unable to load plantuml_processor: %r, %s" % (plantuml_processor, error))
+            print("Unable to load plantuml_processor: %s, %s" % (plantuml_processor, error))
     if not ACTIVE_UML_PROCESSORS:
         raise Exception('No working processors found!')
 
     for viewer in AVAILABLE_VIEWERS:
         if viewer.__name__.find(sublime_settings.get("viewer")) != -1:
             try:
-                print("Loading viewer class from configuration: %r" % viewer)
+                # print("Loading viewer class from configuration: %s" % viewer)
                 vwr = viewer()
                 vwr.load()
                 ACTIVE_VIEWER = vwr
-                print("Loaded viewer: %r" % vwr)
+                print("Loaded viewer: %s" % vwr)
                 break
             except Exception as error:
-                print("Unable to load configured viewer, falling back to autodetection... %s" % error)
+                print("Unable to load configured viewer %s, falling back to autodetection... %s" % (vwr, error))
 
     if ACTIVE_VIEWER is None:
         for viewer in AVAILABLE_VIEWERS:
-            print("Trying Viewer " + viewer.__name__)
+            # print("Trying Viewer " + viewer.__name__)
             try:
-                print("Loading viewer class: %r" % viewer)
+                # print("Loading viewer class: %s" % viewer)
                 vwr = viewer()
                 vwr.load()
                 ACTIVE_VIEWER = vwr
-                print("Loaded viewer: %r" % vwr)
+                print("Loaded viewer: %s" % vwr)
                 break
             except Exception:
-                print("Unable to load viewer: %r" % viewer)
+                print("Unable to load viewer: %s" % viewer)
                 sys.excepthook(*sys.exc_info())
 
     if ACTIVE_VIEWER is None:
         raise Exception('No working viewers found!')
 
     INITIALIZED = True
-    print("Processors: %r" % ACTIVE_UML_PROCESSORS)
-    print("Viewer: %r" % ACTIVE_VIEWER)
+    # print("Processors: %s" % ACTIVE_UML_PROCESSORS)
+    # print("Viewer: %s" % ACTIVE_VIEWER)
 
 
 def process(view):
@@ -122,7 +122,7 @@ def process(view):
 
 
 def render_and_view(sourceFile, diagrams):
-    # print("Rendering %r" % diagrams)
+    # print("Rendering %s" % diagrams)
     sequence = [0]
     diagram_files = []
 
@@ -131,7 +131,7 @@ def render_and_view(sourceFile, diagrams):
         sequence[0] += 1
 
     if diagram_files:
-        print("%r viewing %r" % (ACTIVE_VIEWER, [d.name for d in diagram_files if d]))
+        print("%s viewing %s" % (ACTIVE_VIEWER, [d.name for d in diagram_files if d]))
         ACTIVE_VIEWER.view(diagram_files)
     else:
         error_message("No diagrams generated...")

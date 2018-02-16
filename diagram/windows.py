@@ -9,6 +9,9 @@ except ImportError:
 
 
 class WindowsDefaultViewer(BaseViewer):
+    def __str__(self):
+        return "Windows Default Viewer"
+
     def load(self):
         if platform() != 'windows':
             raise Exception('WindowsDefaultViewer only supported on Windows platforms')

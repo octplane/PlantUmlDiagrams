@@ -4,6 +4,9 @@ from subprocess import check_call, Popen as run_command
 
 
 class FreedesktopDefaultViewer(BaseViewer):
+    def __str__(self):
+        return "Free desktop Default Viewer"
+
     def load(self):
         if not check_call("which xdg-open > /dev/null", shell=True) == 0:
             raise Exception("Freedesktop-conforming default application not found!")

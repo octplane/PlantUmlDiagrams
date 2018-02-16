@@ -68,6 +68,9 @@ class PlantUMLDiagram(BaseDiagram):
                 self.sourceFile = "%s%s%s" % (splitext(self.sourceFile)[0], str(sequence) if sequence else "", self.output_extension)
                 self.file = open(self.sourceFile, 'wb')
 
+    def __str__(self):
+        return "Diagram of %s(%s, %s)" % ( self.sourceFile, self.output_format, self.output_extension )
+
     def __del__(self):
         super( PlantUMLDiagram, self ).__del__()
         self.file.close()
@@ -173,6 +176,9 @@ class PlantUMLDiagram(BaseDiagram):
 class PlantUMLProcessor(BaseProcessor):
     DIAGRAM_CLASS = PlantUMLDiagram
 
+    def __str__(self):
+        return "Plant UML Processor"
+
     def load(self):
         self.check_dependencies()
         self.find_plantuml_jar()
@@ -231,7 +237,7 @@ class PlantUMLProcessor(BaseProcessor):
             if not exists(self.plantuml_jar_path):
                 raise Exception("can't find " + self.plantuml_jar_file)
 
-        print("Detected %r" % (self.plantuml_jar_path,))
+        print("Detected %s" % (self.plantuml_jar_path,))
 
     def check_plantuml_version(self):
         puml = execute(

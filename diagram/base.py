@@ -6,6 +6,9 @@ class BaseDiagram(object):
         self.text = text
         self.sourceFile = sourceFile
 
+    def __str__(self):
+        return "Base Diagram %s(%s)" % ( self.sourceFile, self.uml_processor )
+
     def generate(self):
         raise NotImplementedError('abstract base class is abstract')
 
@@ -15,6 +18,9 @@ class BaseProcessor(object):
     CHARSET = None
     CHECK_ON_STARTUP = True
     NEW_FILE = False
+
+    def __str__(self):
+        return "Base Processor"
 
     def load(self):
         raise NotImplementedError('abstract base class is abstract')
@@ -33,7 +39,7 @@ class BaseProcessor(object):
                 diagrams.append(rendered)
             except Exception as e:
                 print(repr(block))
-                print("Error rendering diagram for block: %r" % e)
+                print("Error rendering diagram for block: %s" % e)
                 sys.excepthook(*sys.exc_info())
             sequence[0] += 1
 
@@ -41,6 +47,9 @@ class BaseProcessor(object):
 
 
 class BaseViewer(object):
+    def __str__(self):
+        return "Sublime Base Viewer"
+
     def load(self):
         raise NotImplementedError('abstract base class is abstract')
 

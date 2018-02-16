@@ -3,6 +3,9 @@ from subprocess import check_call, Popen as run_command
 from sublime import platform
 
 class QuickLookViewer(BaseViewer):
+    def __str__(self):
+        return "Quick Look Viewer"
+
     def load(self):
         if platform() not in ('osx',):
             raise Exception("Currently only supported on MacOS")

@@ -4,6 +4,9 @@ from subprocess import check_call, Popen as run_command
 
 
 class EyeOfGnomeViewer(BaseViewer):
+    def __str__(self):
+        return "Eye Of Gnome Viewer"
+
     def load(self):
         if not check_call("which eog > /dev/null", shell=True) == 0:
             raise Exception("Eye of Gnome not found!")

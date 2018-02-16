@@ -2,6 +2,9 @@ from .base import BaseViewer
 import sublime
 
 class Sublime3Viewer(BaseViewer):
+	def __str__(self):
+		return "Sublime 3 Simple Viewer"
+
 	def load(self):
 		if not sublime.version().startswith('3'):
 			raise Exception("Not Sublime 3!")

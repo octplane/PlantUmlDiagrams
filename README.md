@@ -1,3 +1,36 @@
+# Plant UML Diagrams
+
+This is a forked version from https://github.com/jvantuyl/sublime_diagram_plugin adding a server dependency
+https://github.com/evandrocoan/PlantUmlConnection and rewriting the whole git history removing all the java binary files which have been added,
+reducing the repository size from `22.49 MB` to `204 KB`.
+
+This version now first attempts to contact the webserver accordingly to the new settings:
+```javascript
+    // valid values:
+    // 'png'              generate images using PNG format
+    // 'svg'              generate images using SVG format
+    // 'txt'              generate images with ASCII art
+    // 'utxt'             generate images with ASCII art using Unicode characters
+    // 'latex'            generate images using LaTeX/Tikz format
+    // 'latex:nopreamble' generate images using LaTeX/Tikz format without preamble
+    //
+    // These formats are also supported by plantUml, but they need some
+    // prerequisite to be installed... PlantUml return_code = 1 on invocation:
+    // 'pdf' generate images using PDF format
+    // 'vdx' generate images using VDX format
+    // 'eps' generate images using EPS format
+    "output_format": "png",
+
+    // It will first try to use the server, because is much more faster than
+    // calling directly the jar. If you would like to run a local server,
+    // you can install it from: https://github.com/plantuml/plantuml-server
+    "plantuml_server": "http://www.plantuml.com/plantuml/",
+
+    // The full path to the plantuml.jar file
+    "jar_file": "C:/Users/plantuml.jar",
+```
+
+
 # Overview
 
 This is a plugin that renders diagrams from your selection in Sublime Text 2
