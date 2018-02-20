@@ -237,7 +237,7 @@ class PlantUMLProcessor(BaseProcessor):
             if not exists(self.plantuml_jar_path):
                 raise Exception("can't find " + self.plantuml_jar_file)
 
-        print("Detected %s" % (self.plantuml_jar_path,))
+        # print("Detected %s" % (self.plantuml_jar_path,))
 
     def check_plantuml_version(self):
         puml = execute(

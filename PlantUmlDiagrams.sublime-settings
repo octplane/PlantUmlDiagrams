@@ -1,8 +1,14 @@
 {
     // restart sublime to apply the changes
     //
-    // Preview, QuickLook, EyeOfGnome, WindowsDefaultViewer
-    "viewer" : "Preview",
+    // Sublime3 - All Platforms
+    // Preview - OSX only `open`
+    // Quick Look - OSX only `qlmanage`
+    // EyeOfGnome - Gnome Viewer `eog`
+    // FreedesktopDefault - Linux only `xdg-open`
+    // WindowsDefaultViewer - Windows Only
+    //
+    "viewer" : "Sublime3",
 
     "check_on_startup": false,
 
