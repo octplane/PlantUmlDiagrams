@@ -72,7 +72,7 @@ def _load_preprocessor(sublime_settings):
             break
 
     if not ACTIVE_UML_PROCESSORS:
-        raise Exception('No working processors found!')
+        print( 'PlantUMLDiagrams: ERROR, no working processors found!' )
 
 
 def _load_viewer(sublime_settings):

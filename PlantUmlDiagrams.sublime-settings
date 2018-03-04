@@ -10,9 +10,11 @@
     //
     "viewer" : "Sublime3",
 
-    "check_on_startup": false,
+    "check_on_startup": true,
 
-    // generate new file each time
+    // Generate a new file each time a diagram is created, or just create the
+    // diagram using the current file name as base. On this case, the file will
+    // be created on the same directory as the current file.
     "new_file": false,
 
     // valid values:

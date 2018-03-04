@@ -193,7 +193,7 @@ class PlantUMLProcessor(BaseProcessor):
         )
 
         if has_java is not 0:
-            raise Exception("can't find Java")
+            print( "PlantUMLDiagrams: ERROR, cannot find Java")
 
     def check_plantuml_functionality(self):
         puml = execute(
@@ -212,11 +212,8 @@ class PlantUMLProcessor(BaseProcessor):
         (stdout, stderr) = puml.communicate()
         dot_output = str(stdout)
 
-        print("PlantUML Smoke Check:")
-        print(dot_output)
-
         if ('OK' not in dot_output) or ('Error' in dot_output):
-            raise Exception('PlantUML does not appear functional')
+            print( "PlantUMLDiagrams: ERROR, PlantUML does not appear functional: %s" % dot_output)
 
     def find_plantuml_jar(self):
         self.plantuml_jar_file = 'plantuml.jar'
