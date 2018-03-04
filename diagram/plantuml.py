@@ -72,7 +72,6 @@ class PlantUMLDiagram(BaseDiagram):
         return "Diagram of %s(%s, %s)" % ( self.sourceFile, self.output_format, self.output_extension )
 
     def __del__(self):
-        super( PlantUMLDiagram, self ).__del__()
         self.file.close()
 
     def generate(self):
