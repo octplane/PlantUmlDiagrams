@@ -19,12 +19,8 @@ try:
 except NameError:
     all_views_active = {}
 
-CURRENT_PACKAGE_FILE   = os.path.dirname( os.path.realpath( __file__ ) )
-PACKAGE_ROOT_DIRECTORY = CURRENT_PACKAGE_FILE.replace( ".py", "" )
-CURRENT_PACKAGE_NAME   = os.path.basename( PACKAGE_ROOT_DIRECTORY )
-
 from debug_tools import getLogger
-log = getLogger(CURRENT_PACKAGE_NAME)
+log = getLogger(__package__)
 
 
 def process_diagram_image(view):
