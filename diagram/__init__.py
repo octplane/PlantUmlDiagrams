@@ -120,8 +120,14 @@ def _load_viewer(sublime_settings):
         raise Exception('No working viewers found!')
 
 
-def process(view):
+def process(view, continuous_processor=None):
     diagrams = []
+
+    if continuous_processor:
+        async=False
+
+    else:
+        async=True
 
     for plantuml_processor in ACTIVE_UML_PROCESSORS:
         text_blocks = []
@@ -146,10 +152,14 @@ def process(view):
 
     if diagrams:
         sourceFile = view.file_name()
-        t = Thread(target=render_and_view, args=(sourceFile, diagrams,))
 
-        t.daemon = True
-        t.start()
+        if async:
+            t = Thread(target=render_and_view, args=(sourceFile, diagrams, continuous_processor))
+            t.daemon = True
+            t.start()
+
+        else:
+            render_and_view(sourceFile, diagrams, continuous_processor)
 
         return True
 
@@ -157,17 +167,28 @@ def process(view):
         return False
 
 
-def render_and_view(sourceFile, diagrams):
+def render_and_view(sourceFile, diagrams, continuous_processor):
     # print("Rendering %s" % diagrams)
     sequence = [0]
     diagram_files = []
 
     for plantuml_processor, text_blocks in diagrams:
-        diagram_files.extend(plantuml_processor.process(sourceFile, text_blocks, sequence))
+        diagram_files.extend(plantuml_processor.process(sourceFile, text_blocks, sequence, continuous_processor))
         sequence[0] += 1
 
     if diagram_files:
-        print("%s viewing %s" % (ACTIVE_VIEWER, [d.name for d in diagram_files if d]))
-        ACTIVE_VIEWER.view(diagram_files)
+        names = [d.name for d in diagram_files if d]
+
+        if continuous_processor:
+
+            if continuous_processor.open_image:
+                print("continuous_processor: %s viewing %s" % (ACTIVE_VIEWER, names))
+                ACTIVE_VIEWER.view(diagram_files)
+                continuous_processor.open_image = False
+
+        else:
+            print("%s viewing %s" % (ACTIVE_VIEWER, names))
+            ACTIVE_VIEWER.view(diagram_files)
+
     else:
         error_message("No diagrams generated...")
