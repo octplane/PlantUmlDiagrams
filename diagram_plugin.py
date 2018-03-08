@@ -42,14 +42,14 @@ class DiagramContinueCreationThread(threading.Thread):
     def run(self):
         view = self.view
         window = view.window()
-        current_time = time.perf_counter()
+        current_time = time.time()
 
         elapsed_time = 0.1
         mininum_time = 1.0
         default_time = 1.0
 
         while True:
-            print("current_time: %s" % current_time)
+            # print("current_time: %s, elapsed_time: %s" % (current_time, elapsed_time))
 
             # Run until it closes
             if view not in window.views():
@@ -61,7 +61,7 @@ class DiagramContinueCreationThread(threading.Thread):
                     and window == sublime.active_window() \
                     and view == window.active_view():
 
-                current_time = time.perf_counter()
+                current_time = time.time()
                 self.change_count = view.change_count()
 
                 open_image = self.open_image
@@ -78,7 +78,8 @@ class DiagramContinueCreationThread(threading.Thread):
                     window.focus_group( group )
                     window.focus_sheet( active_sheet )
 
-            elapsed_time = current_time - time.perf_counter()
+                elapsed_time = time.time() - current_time
+
             self.sleepEvent.wait( elapsed_time*3 if elapsed_time > mininum_time else default_time )
 
 
