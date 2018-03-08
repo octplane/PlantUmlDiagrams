@@ -70,8 +70,8 @@ class DiagramContinueCreationThread(threading.Thread):
                 self.change_count = view.change_count()
 
                 open_image = self.open_image
-                active_sheet = window.active_sheet()
-                group, view_index = window.get_view_index(view)
+                # active_sheet = window.active_sheet()
+                # group, view_index = window.get_view_index(view)
 
                 if not process(view, self):
                     error_message("No diagrams overlap selections.\n\n" \
@@ -80,8 +80,8 @@ class DiagramContinueCreationThread(threading.Thread):
                 # Allowed the image view to be focused on the first time it is opened
                 if not open_image:
                     window.focus_view( view )
-                    window.focus_group( group )
-                    window.focus_sheet( active_sheet )
+                    # window.focus_group( group )
+                    # window.focus_sheet( active_sheet )
 
                 elapsed_time = time.time() - current_time
 
