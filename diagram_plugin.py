@@ -66,6 +66,9 @@ class DiagramContinueCreationThread(threading.Thread):
                     and window == sublime.active_window() \
                     and view == window.active_view():
 
+                # Wait a little to not generate the diagram by the first thing the user type
+                self.sleepEvent.wait( 1.0 )
+
                 current_time = time.time()
                 self.change_count = view.change_count()
 
@@ -73,9 +76,12 @@ class DiagramContinueCreationThread(threading.Thread):
                 # active_sheet = window.active_sheet()
                 # group, view_index = window.get_view_index(view)
 
-                if not process(view, self):
-                    error_message("No diagrams overlap selections.\n\n" \
-                        "Nothing to process.")
+                try:
+                    process(view, self)
+
+                except ValueError as error:
+                    log(1, "%s", error)
+                    pass
 
                 # Allowed the image view to be focused on the first time it is opened
                 if not open_image:

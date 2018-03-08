@@ -10,6 +10,10 @@ from sublime import platform, load_settings
 
 import plantuml_connection
 
+# import imp
+# imp.reload( plantuml_connection )
+
+
 import os
 import sys
 import subprocess
@@ -85,9 +89,11 @@ class PlantUMLDiagram(BaseDiagram):
         try:
             sublime_settings = load_settings("PlantUmlDiagrams.sublime-settings")
             server_url = sublime_settings.get('plantuml_server', 'http://www.plantuml.com/plantuml/')
+
+            # server_url = 'http://www.plantuml.com/plantuml/'
             self._generate_server( "%s/%s/" % (server_url.strip('/'), self.output_format))
 
-        except Exception as error:
+        except plantuml_connection.PlantUMLConnectionError as error:
             log(1, "Failed to connect to the server: %s (%s) Falling back to local rendering..." % (error, server_url))
             cwd, startupinfo = self._get_local_dir_info()
             self._generate_local(cwd, startupinfo)
@@ -96,6 +102,7 @@ class PlantUMLDiagram(BaseDiagram):
 
     def _generate_server(self, server_url):
         plantumlserver = plantuml_connection.PlantUML(server_url)
+
         content = plantumlserver.processes(self.text.encode('utf-8'))
         self.file.write(content)
 
@@ -109,6 +116,7 @@ class PlantUMLDiagram(BaseDiagram):
             '-jar',
             self.uml_processor.plantuml_jar_path,
             '-pipe',
+            '-failfast2', # http://plantuml.com/command-line
             '-t%s' % self.output_format,
         ]
 
@@ -149,7 +157,7 @@ class PlantUMLDiagram(BaseDiagram):
                     new_data.append(data)
 
             log(1, self.text)
-            log(1, "Error Processing Diagram:", ''.join(new_data))
+            log(1, "Error Processing Diagram: %s", ''.join(new_data))
             return
 
     def _get_local_dir_info(self):
