@@ -10,6 +10,14 @@ try:
 except ValueError:
     from diagram import setup, process
 
+
+try:
+    all_views_active
+
+except NameError:
+    all_views_active = {}
+
+
 def process_diagram_image(view):
     print("Processing diagrams in %s..." % view.file_name())
 
@@ -17,9 +25,11 @@ def process_diagram_image(view):
         error_message("No diagrams overlap selections.\n\n" \
             "Nothing to process.")
 
+
 class DiagramContinueCreationThread(threading.Thread):
 
     def __init__(self, view):
+        all_views_active[view.id()] = self
         threading.Thread.__init__(self)
 
         self.view = view
@@ -44,6 +54,7 @@ class DiagramContinueCreationThread(threading.Thread):
             # Run until it closes
             if view not in window.views():
                 print("Exiting continuous thread...")
+                del all_views_active[view.id()]
                 return
 
             elif change_count != view.change_count() \
@@ -71,10 +82,15 @@ class DiagramContinueCreationThread(threading.Thread):
 class DisplayDiagramsContinually(TextCommand):
 
     def run(self, edit):
+        view = self.view
         print("Processing diagrams in %s..." % self.view)
 
-        continuous_thread = DiagramContinueCreationThread( self.view )
-        continuous_thread.start()
+        if view.id() in all_views_active:
+            all_views_active[view.id()].open_image = True
+
+        else:
+            continuous_thread = DiagramContinueCreationThread( view )
+            continuous_thread.start()
 
 
 class DisplayDiagrams(TextCommand):
