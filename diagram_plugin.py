@@ -32,6 +32,9 @@ class DiagramContinueCreationThread(threading.Thread):
         all_views_active[view.id()] = self
         threading.Thread.__init__(self)
 
+        # Force it to be refreshed on the first time
+        self.change_count = -1
+
         self.view = view
         self.open_image = True
         self.sleepEvent = threading.Event()
@@ -39,9 +42,6 @@ class DiagramContinueCreationThread(threading.Thread):
     def run(self):
         view = self.view
         window = view.window()
-
-        # Force it to be refreshed on the first time
-        change_count = -1
         current_time = time.perf_counter()
 
         elapsed_time = 0.1
@@ -57,13 +57,14 @@ class DiagramContinueCreationThread(threading.Thread):
                 del all_views_active[view.id()]
                 return
 
-            elif change_count != view.change_count() \
+            elif self.change_count != view.change_count() \
                     and window == sublime.active_window() \
                     and view == window.active_view():
 
                 current_time = time.perf_counter()
-                change_count = view.change_count()
+                self.change_count = view.change_count()
 
+                open_image = self.open_image
                 active_sheet = window.active_sheet()
                 group, view_index = window.get_view_index(view)
 
@@ -71,9 +72,11 @@ class DiagramContinueCreationThread(threading.Thread):
                     error_message("No diagrams overlap selections.\n\n" \
                         "Nothing to process.")
 
-                window.focus_view( view )
-                window.focus_group( group )
-                window.focus_sheet( active_sheet )
+                # Allowed the image view to be focused on the first time it is opened
+                if not open_image:
+                    window.focus_view( view )
+                    window.focus_group( group )
+                    window.focus_sheet( active_sheet )
 
             elapsed_time = current_time - time.perf_counter()
             self.sleepEvent.wait( elapsed_time*3 if elapsed_time > mininum_time else default_time )
@@ -85,8 +88,11 @@ class DisplayDiagramsContinually(TextCommand):
         view = self.view
         print("Processing diagrams in %s..." % self.view)
 
+        # Force the view to the reprocessed as it associated image could have been closed
         if view.id() in all_views_active:
-            all_views_active[view.id()].open_image = True
+            continuous_processor = all_views_active[view.id()]
+            continuous_processor.open_image = True
+            continuous_processor.change_count = -1
 
         else:
             continuous_thread = DiagramContinueCreationThread( view )
