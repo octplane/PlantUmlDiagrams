@@ -1,5 +1,6 @@
 ﻿
 import os
+import re
 import time
 
 import sublime
@@ -12,6 +13,8 @@ try:
 except ValueError:
     from diagram import setup, process
 
+import plantuml_connection
+
 
 try:
     all_views_active
@@ -20,7 +23,7 @@ except NameError:
     all_views_active = {}
 
 from debug_tools import getLogger
-log = getLogger(__package__)
+log = getLogger(3, __package__)
 
 
 def process_diagram_image(view):
@@ -54,7 +57,10 @@ class DiagramContinueCreationThread(threading.Thread):
         default_time = 1.0
 
         while True:
-            # log(1, "current_time: %s, elapsed_time: %s" % (current_time, elapsed_time))
+            log(4, "current_time: %s, elapsed_time: %s" % (current_time, elapsed_time))
+
+            # Wait a little to not generate the diagram by the first thing the user type
+            self.sleepEvent.wait( 1.0 )
 
             # Run until it closes
             if view not in window.views():
@@ -66,9 +72,6 @@ class DiagramContinueCreationThread(threading.Thread):
                     and window == sublime.active_window() \
                     and view == window.active_view():
 
-                # Wait a little to not generate the diagram by the first thing the user type
-                self.sleepEvent.wait( 1.0 )
-
                 current_time = time.time()
                 self.change_count = view.change_count()
 
@@ -79,9 +82,9 @@ class DiagramContinueCreationThread(threading.Thread):
                 try:
                     process(view, self)
 
-                except ValueError as error:
-                    log(1, "%s", error)
-                    pass
+                except plantuml_connection.PlantUMLSyntaxError as error:
+                    log(1, "Syntax error on diagram: %s",
+                            re.findall(r'X-PlantUML-Diagram-Description:((?:.|\n)*?)X-Powered-By', str(error)))
 
                 # Allowed the image view to be focused on the first time it is opened
                 if not open_image:
