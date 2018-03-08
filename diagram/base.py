@@ -1,4 +1,8 @@
-﻿import sys
+﻿
+from debug_tools import getLogger
+log = getLogger(__name__)
+
+import sys
 
 class BaseDiagram(object):
     def __init__(self, processor, sourceFile, text):
@@ -34,14 +38,14 @@ class BaseProcessor(object):
         for block in text_blocks:
             try:
                 if not continuous_processor:
-                    print("Rendering diagram for block...", sequence[0])
+                    log(1, "Rendering diagram for block...", sequence[0])
 
                 diagram = self.DIAGRAM_CLASS(self, sourceFile, block, sequence[0])
                 rendered = diagram.generate()
                 diagrams.append(rendered)
             except Exception as e:
-                print(repr(block))
-                print("Error rendering diagram for block: %s" % e)
+                log(1, repr(block))
+                log(1, "Error rendering diagram for block: %s" % e)
                 sys.excepthook(*sys.exc_info())
             sequence[0] += 1
 

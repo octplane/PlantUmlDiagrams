@@ -1,5 +1,7 @@
 ﻿
+import os
 import time
+
 import sublime
 import threading
 
@@ -17,9 +19,16 @@ try:
 except NameError:
     all_views_active = {}
 
+CURRENT_PACKAGE_FILE   = os.path.dirname( os.path.realpath( __file__ ) )
+PACKAGE_ROOT_DIRECTORY = CURRENT_PACKAGE_FILE.replace( ".py", "" )
+CURRENT_PACKAGE_NAME   = os.path.basename( PACKAGE_ROOT_DIRECTORY )
+
+from debug_tools import getLogger
+log = getLogger(CURRENT_PACKAGE_NAME)
+
 
 def process_diagram_image(view):
-    print("Processing diagrams in %s..." % view.file_name())
+    log(1, "Processing diagrams in %s..." % view.file_name())
 
     if not process(view):
         error_message("No diagrams overlap selections.\n\n" \
@@ -49,11 +58,11 @@ class DiagramContinueCreationThread(threading.Thread):
         default_time = 1.0
 
         while True:
-            # print("current_time: %s, elapsed_time: %s" % (current_time, elapsed_time))
+            # log(1, "current_time: %s, elapsed_time: %s" % (current_time, elapsed_time))
 
             # Run until it closes
             if view not in window.views():
-                print("Exiting continuous thread...")
+                log(1, "Exiting continuous thread...")
                 del all_views_active[view.id()]
                 return
 
@@ -87,7 +96,7 @@ class DisplayDiagramsContinually(TextCommand):
 
     def run(self, edit):
         view = self.view
-        print("Processing diagrams in %s..." % self.view)
+        log(1, "Processing diagrams in %s..." % self.view)
 
         # Force the view to the reprocessed as it associated image could have been closed
         if view.id() in all_views_active:

@@ -22,6 +22,9 @@ else:
 if os.name == 'nt':
     from ctypes import windll, create_unicode_buffer
 
+from debug_tools import getLogger
+log = getLogger(__name__)
+
 IS_MSWINDOWS = (platform() == 'windows')
 CREATE_NO_WINDOW = 0x08000000  # See MSDN, http://goo.gl/l4OKNe
 EXTRA_CALL_ARGS = {'creationflags': CREATE_NO_WINDOW, 'shell': True} if IS_MSWINDOWS else {}
@@ -85,7 +88,7 @@ class PlantUMLDiagram(BaseDiagram):
             self._generate_server( "%s/%s/" % (server_url.strip('/'), self.output_format))
 
         except Exception as error:
-            print("Failed to connect to the server: %s (%s) Falling back to local rendering..." % (error, server_url))
+            log(1, "Failed to connect to the server: %s (%s) Falling back to local rendering..." % (error, server_url))
             cwd, startupinfo = self._get_local_dir_info()
             self._generate_local(cwd, startupinfo)
 
@@ -112,16 +115,16 @@ class PlantUMLDiagram(BaseDiagram):
         charset = self.uml_processor.CHARSET
 
         if charset:
-            # print('using charset: ' + charset)
+            # log(1, 'using charset: ' + charset)
             command.append("-charset")
             command.append(charset)
 
         else:
-            # print('using default charset: UTF-8')
+            # log(1, 'using default charset: UTF-8')
             command.append("-charset")
             command.append('UTF-8')
 
-        # print("Command: %s" % (command))
+        # log(1, "Command: %s" % (command))
 
         puml = execute(
             command,
@@ -145,8 +148,8 @@ class PlantUMLDiagram(BaseDiagram):
                     data = data.replace('\r\n', '\n').rstrip(' \n\r')
                     new_data.append(data)
 
-            print(self.text)
-            print("Error Processing Diagram:", ''.join(new_data))
+            log(1, self.text)
+            log(1, "Error Processing Diagram:", ''.join(new_data))
             return
 
     def _get_local_dir_info(self):
@@ -192,7 +195,7 @@ class PlantUMLProcessor(BaseProcessor):
         )
 
         if has_java is not 0:
-            print( "PlantUMLDiagrams: ERROR, cannot find Java")
+            log(1,  "PlantUMLDiagrams: ERROR, cannot find Java")
 
     def check_plantuml_functionality(self):
         puml = execute(
@@ -212,7 +215,7 @@ class PlantUMLProcessor(BaseProcessor):
         dot_output = str(stdout)
 
         if ('OK' not in dot_output) or ('Error' in dot_output):
-            print( "PlantUMLDiagrams: ERROR, PlantUML does not appear functional: %s" % dot_output)
+            log(1,  "PlantUMLDiagrams: ERROR, PlantUML does not appear functional: %s" % dot_output)
 
     def find_plantuml_jar(self):
         self.plantuml_jar_file = 'plantuml.jar'
@@ -233,7 +236,7 @@ class PlantUMLProcessor(BaseProcessor):
             if not exists(self.plantuml_jar_path):
                 raise Exception("can't find " + self.plantuml_jar_file)
 
-        # print("Detected %s" % (self.plantuml_jar_path,))
+        # log(1, "Detected %s" % (self.plantuml_jar_path,))
 
     def check_plantuml_version(self):
         puml = execute(
@@ -252,8 +255,8 @@ class PlantUMLProcessor(BaseProcessor):
         (stdout, stderr) = puml.communicate()
         version_output = stdout
 
-        print("Version Detection:")
-        print(version_output)
+        log(1, "Version Detection:")
+        log(1, version_output)
 
         if not puml.returncode == 0:
             raise Exception("PlantUML returned an error code")
