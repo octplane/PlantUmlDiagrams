@@ -28,12 +28,14 @@ class BaseProcessor(object):
     def extract_blocks(self, view):
         raise NotImplementedError('abstract base class is abstract')
 
-    def process(self, sourceFile, text_blocks, sequence):
+    def process(self, sourceFile, text_blocks, sequence, continuous_processor=None):
         diagrams = []
 
         for block in text_blocks:
             try:
-                print("Rendering diagram for block...", sequence[0])
+                if not continuous_processor:
+                    print("Rendering diagram for block...", sequence[0])
+
                 diagram = self.DIAGRAM_CLASS(self, sourceFile, block, sequence[0])
                 rendered = diagram.generate()
                 diagrams.append(rendered)
