@@ -50,10 +50,9 @@ class DiagramContinueCreationThread(threading.Thread):
     def run(self):
         view = self.view
         window = view.window()
-        current_time = time.time()
 
+        current_time = time.time()
         elapsed_time = 0.1
-        mininum_time = 1.0
         default_time = 1.0
 
         while True:
@@ -94,7 +93,7 @@ class DiagramContinueCreationThread(threading.Thread):
 
                 elapsed_time = time.time() - current_time
 
-            self.sleepEvent.wait( elapsed_time*3 if elapsed_time > mininum_time else default_time )
+            self.sleepEvent.wait( default_time )
 
 
 class DisplayDiagramsContinually(TextCommand):
