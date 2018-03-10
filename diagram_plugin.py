@@ -4,6 +4,7 @@ import re
 import time
 
 import sublime
+import sublime_plugin
 import threading
 
 from sublime_plugin import TextCommand
@@ -35,15 +36,18 @@ def process_diagram_image(view):
 
 
 class DiagramContinueCreationThread(threading.Thread):
+    is_there_new_changes = False
 
     def __init__(self, view):
+        self.view = view
+
         all_views_active[view.id()] = self
         threading.Thread.__init__(self)
 
         # Force it to be refreshed on the first time
         self.change_count = -1
+        self.last_user_key_change = time.time()
 
-        self.view = view
         self.open_image = True
         self.sleepEvent = threading.Event()
 
@@ -58,8 +62,10 @@ class DiagramContinueCreationThread(threading.Thread):
         while True:
             log(4, "current_time: %s, elapsed_time: %s" % (current_time, elapsed_time))
 
-            # Wait a little to not generate the diagram by the first thing the user type
-            self.sleepEvent.wait( 1.0 )
+            # Wait a little to not generate the diagram/image while the user is typing
+            while DiagramContinueCreationThread.is_there_new_changes:
+                DiagramContinueCreationThread.is_there_new_changes = False
+                self.sleepEvent.wait( 2.0 )
 
             # Run until it closes
             if view not in window.views():
@@ -111,6 +117,12 @@ class DisplayDiagramsContinually(TextCommand):
         else:
             continuous_thread = DiagramContinueCreationThread( view )
             continuous_thread.start()
+
+
+class DisplayDiagramsContinuallyEventListener(sublime_plugin.EventListener):
+
+    def on_modified(self, view):
+        DiagramContinueCreationThread.is_there_new_changes = True
 
 
 class DisplayDiagrams(TextCommand):
