@@ -15,6 +15,7 @@ except ValueError:
     from diagram import setup, process
 
 import plantuml_connection
+g_is_there_new_changes = False
 
 
 try:
@@ -36,7 +37,6 @@ def process_diagram_image(view):
 
 
 class DiagramContinueCreationThread(threading.Thread):
-    is_there_new_changes = False
 
     def __init__(self, view):
         self.view = view
@@ -52,6 +52,8 @@ class DiagramContinueCreationThread(threading.Thread):
         self.sleepEvent = threading.Event()
 
     def run(self):
+        global g_is_there_new_changes
+
         view = self.view
         window = view.window()
 
@@ -63,9 +65,9 @@ class DiagramContinueCreationThread(threading.Thread):
             log(4, "current_time: %s, elapsed_time: %s" % (current_time, elapsed_time))
 
             # Wait a little to not generate the diagram/image while the user is typing
-            while DiagramContinueCreationThread.is_there_new_changes:
-                DiagramContinueCreationThread.is_there_new_changes = False
-                self.sleepEvent.wait( 2.0 )
+            while g_is_there_new_changes:
+                g_is_there_new_changes = False
+                self.sleepEvent.wait( 1.0 )
 
             # Run until it closes
             if view not in window.views():
@@ -121,8 +123,9 @@ class DisplayDiagramsContinually(TextCommand):
 
 class DisplayDiagramsContinuallyEventListener(sublime_plugin.EventListener):
 
-    def on_modified(self, view):
-        DiagramContinueCreationThread.is_there_new_changes = True
+    def on_selection_modified(self, view):
+        global g_is_there_new_changes
+        g_is_there_new_changes = True
 
 
 class DisplayDiagrams(TextCommand):
