@@ -2,7 +2,10 @@
 ---
 # See http://www.sublimetext.com/docs/3/syntax.html
 name: DiagramEx
-file_extensions: [wsd, uml, puml]
+file_extensions:
+  - wsd
+  - uml
+  - puml
 scope: source.wsd
 
 variables:
@@ -34,7 +37,7 @@ variables:
 
 contexts:
   main:
-    - match: (?xi) ^ ( \# | ' )
+    - match: (?xi) ( \# | ' ) (?!.*')
       scope: comment.line.source.wsd
       push:
         - meta_scope: comment.line.source.wsd

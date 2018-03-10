@@ -9,7 +9,7 @@ name: Diagram
 scope: source.wsd
 contexts:
   main:
-    - match: ^(#|')
+    - match: (#|')(?!.*')
       push:
         - meta_scope: comment.line.source.wsd
         - match: \n
