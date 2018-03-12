@@ -123,7 +123,7 @@ class DisplayDiagramsContinually(TextCommand):
 
 class DisplayDiagramsContinuallyEventListener(sublime_plugin.EventListener):
 
-    def on_selection_modified(self, view):
+    def on_modified(self, view):
         global g_is_there_new_changes
         g_is_there_new_changes = True
 
