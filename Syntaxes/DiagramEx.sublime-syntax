@@ -9,8 +9,8 @@ file_extensions:
 scope: source.wsd
 
 variables:
-  obj_name: '(?xi) [a-z]  [a-z_0-9]*'
-  var_name: '(?xi) [a-z_] [a-z_0-9]*'
+  obj_name: '(?xi) [a-z_]  [a-z_0-9]*'
+  color: '(?xi) \# (?: \d+ | {{obj_name}} )'
   known_color: |-
     (?xi) (?:
       AliceBlue | AntiqueWhite | Aqua | Aquamarine | Azure | Beige | Bisque | Black | BlanchedAlmond | Blue | BlueViolet |
@@ -28,16 +28,11 @@ variables:
       Salmon | SandyBrown | SeaGreen | SeaShell | Sienna | Silver | SkyBlue | SlateBlue | SlateGray | SlateGrey | Snow | SpringGreen |
       SteelBlue | Tan | Teal | Thistle | Tomato | Turquoise | Violet | Wheat | White | WhiteSmoke | Yellow | YellowGreen
     )
-  color: '(?xi) \# (?: \d+ | {{obj_name}} )'
-  arrow: |-
-    (?xi) (?:
-      --> | -> | -\[ {{color}} \]> |
-      <-- | <- | <\[ {{color}} \]-
-    )
+
 
 contexts:
   main:
-    - match: (?xi) ( \# | ' ) (?!.*')
+    - match: (?xi) ^ \s* ( \# | ' ) (?!.*')
       scope: comment.line.source.wsd
       push:
         - meta_scope: comment.line.source.wsd
@@ -45,24 +40,30 @@ contexts:
           pop: true
 
     - match: |-
-        (?xi) \b
-        (
+        (?xi) ^ \s*
+        \b (
           abstract | actor | artifact | class | component | database |
           enum | interface | object | package | participant | state |
           usecase
         ) \b
       scope: support.function.source.wsd
-
-    - match: (?xi) ^ \b title \b
-      scope: string.quoted.double.source.wsd
       push:
-        - match: '\n'
-          scope: keyword.control.source.wsd
+        - match: '(.*)(\{)'
+          captures:
+            1: entity.name.class.wsd entity.name.struct.wsd
+          push:
+            - meta_scope: meta.block.wsd
+            - include: all_reamaining
+            - match: '\}'
+              pop: true
+        - match: ''
           pop: true
+
+    - include: all_reamaining
 
     # control keywords
     - match: |-
-        (?xi) \b (
+        (?xi) ^ \s* \b (
           @enduml | @startuml | activate | again | also | alt | as | autonumber | bottom | box | break |
           center | create | critical | deactivate | destroy | down | else | end | endif | endwhile | footbox |
           footer | fork | group | header | hide | if | is | left | link | loop | namespace |
@@ -72,24 +73,51 @@ contexts:
         )\b
       scope: keyword.control.source.wsd
 
+    - match: (?xi) \b {{obj_name}} \b
+      scope: variable.parameter.source.wsd
+
+
+  all_reamaining:
+    - match: (?xi) ^ \b title \b
+      scope: string.quoted.double.source.wsd
+      push:
+        - match: '\n'
+          scope: keyword.control.source.wsd
+          pop: true
+
     # known colors
     - match: '{{known_color}}'
       scope: variable.source.wsd
 
-    - match: (?xi) ( {{obj_name}} ) \s ( {{arrow}} ) \s ( {{obj_name}} ) [ \t]* (:)?
+    - match: |-
+        (?xi) ^ \s* ( [\w\_\-]+ ) \s*
+        (
+          (?:["'].*?["'])? \s*
+          (?:
+              [\<\}\*o\.\+x\^\#\ ]             (?:[\-\-]|[\.\.]){2}?\*?
+              | \*?(?:[\-\-]|[\.\.]){2}        [\{\>\*o\.\+x\^\#\ ]
+
+              | [\<\{\*o\.\+x\^\#]\|?[-\.]?           ([^\|\-\s\.]*)[\-\.]
+              | [\-\.]([^\|\-\s\.]*)                  [-\.]?\|?[\*o\.\+x\^\#\{\>]
+          )
+          \s* (?:["'].*?["'])? \s* ( [\w\_\-]+ )
+        )
       captures:
-        1: constant.string.source.wsd
-        2: keyword.control.source.wsd
-        3: constant.string.source.wsd
+        1: entity.name.function.wsd
+        2: string.quoted.double.source.wsd
+        3: keyword.control.source.wsd
         4: keyword.control.source.wsd
+        5: entity.name.function.wsd
       push:
-        - meta_scope: string.quoted.double.source.wsd
+        - meta_scope: constant.string.source.wsd
+        - match: ':'
+          scope: keyword.control.source.wsd
         - match: \n
           pop: true
 
     - match: (?xi) ^ ( {{obj_name}} ) [ \t]* (:)
       captures:
-        1: constant.string.source.wsd
+        1: entity.name.function.wsd
         2: keyword.control.source.wsd
       push:
         - meta_scope: string.quoted.double.source.wsd
@@ -112,5 +140,5 @@ contexts:
 
     - match: (?xi) \b {{obj_name}} \b
       scope: constant.string.source.wsd
-    - match: (?xi) \b {{var_name}} \b
-      scope: variable.parameter.source.wsd
+
+
