@@ -61,6 +61,22 @@ To install from scratch, it's necessary to have:
 To install, just put a checkout of this project into your Packages directory in
 Sublime Text.
 
+- You may already have a PlantUML server in your team,
+  find the server address,
+  like:
+  `http://192.168.1.100:8080/plantuml`.
+
+- If don't have one,
+  you can set up on you own ([follow the instructions](https://github.com/plantuml/plantuml-server)).
+  Find the server address, like: `http://localhost:8080/plantuml`,
+  or `http://192.168.1.100:8080/plantuml` which is ready for sharing to your team.
+
+- Open user setting, and configure like:
+
+```text
+"plantuml.server": "http://192.168.1.100:8080/plantuml",
+```
+
 
 ## Support
 

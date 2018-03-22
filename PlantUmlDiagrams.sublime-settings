@@ -33,9 +33,22 @@
     "output_format": "png",
 
     // It will first try to use the server, because is much more faster than
-    // calling directly the jar. If you would like to run a local server,
-    // you can install it from: https://github.com/plantuml/plantuml-server
-    "plantuml_server": "http://www.plantuml.com/plantuml/",
+    // calling directly the jar. If you would like to run a local server, you
+    // can install it from: https://github.com/plantuml/plantuml-server
+    //
+    // You also use a third part server, sending your diagram code to
+    // third-parties by default, use this web server:
+    // "http://www.plantuml.com/plantuml/"
+    //
+    // You may already have a PlantUML server in your team, find the server
+    // address, like: http://192.168.1.100:8080/plantuml.
+    //
+    // If don't have one, you can set up on you own (follow the instructions on:
+    // https://github.com/plantuml/plantuml-server).
+    //
+    // Find the server address, like: http://localhost:8080/plantuml, or
+    // http://192.168.1.100:8080/plantuml which is ready for sharing to your team.
+    "plantuml_server": "http://localhost:8080/plantuml/",
 
     // The full path to the plantuml.jar file
     "jar_file": "C:/Users/plantuml.jar",
