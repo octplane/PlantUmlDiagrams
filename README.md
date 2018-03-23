@@ -96,24 +96,6 @@ See also:
 1. https://github.com/plantuml/plantuml-server
 
 
-## Install Instructions
-
-Check out the source directory or download and uncompress the source tarball.
-Put this directory in the Packages directory for your platform.
-
-On Linux, it's sometimes "~/.config/sublime-text-2/Packages/".
-On MacOS X, it's "~/Library/Application Support/Sublime Text 2/Packages/".
-
-Sublime Text should detect the plugin and automatically load it.
-
-The source is available via git at:
-
-<https://github.com/jvantuyl/sublime_diagram_plugin.git>
-
-Or as a tarball at:
-
-<https://github.com/jvantuyl/sublime_diagram_plugin/tarball/master>
-
 ## Example Results
 
 ### Component Diagram 1
@@ -135,10 +117,16 @@ including:
 * Seán Labastille (Preview Support, Multi-Diagram Support)
 * Kirk Strauser (Python 3 / SublimeText 3 Support)
 * Stanislav Vitko (PlantUML Updates)
-* Constantine ? (Windows Viewer, Charset Support, Various Other Fixes)
+* Constantine ? (Windows Viewer, Charset Support, Image Size Tweaks, Output Selection Support, Various Other Fixes)
 * Marcelo Da Cruz Pinto (Windows Viewer)
 * Peter Ertel (PEP8 Cleanup, Windows Improvements)
 * Juan Cabrera (Version Updates)
+* Alexey Shashev (ST3 Plugin Loading Fixes)
+* Riley Wood (PlantUML Updates)
+* Ben Hardill (ST3 Native PNG Viewer)
+* Maksim Chartkou (File Naming Stability Improvements)
+* Timothy Zhang (File Include Support)
+* Way Wang (Python 3 Correctness Patch)
 
 
 ## Reverse Engineering
