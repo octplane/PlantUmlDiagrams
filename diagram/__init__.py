@@ -1,4 +1,8 @@
-﻿from __future__ import absolute_import
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+
+
+from __future__ import absolute_import
 
 from .plantuml import PlantUMLProcessor
 from .sublime3 import Sublime3Viewer

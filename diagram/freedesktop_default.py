@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+
+
 from .base import BaseViewer
 import sys
 from subprocess import check_call, Popen as run_command

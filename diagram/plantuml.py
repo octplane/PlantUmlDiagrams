@@ -1,4 +1,8 @@
-﻿from __future__ import absolute_import
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+
+
+from __future__ import absolute_import
 from .base import BaseDiagram
 from .base import BaseProcessor
 from subprocess import Popen as execute, PIPE, STDOUT, call

@@ -1,4 +1,8 @@
-﻿from .base import BaseViewer
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+
+
+from .base import BaseViewer
 from subprocess import check_call, Popen as run_command
 from sublime import platform
 

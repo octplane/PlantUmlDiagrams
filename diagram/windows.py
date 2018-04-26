@@ -1,4 +1,8 @@
-﻿from .base import BaseViewer
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+
+
+from .base import BaseViewer
 from sublime import platform
 
 try:
