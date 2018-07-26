@@ -41,14 +41,14 @@ class BaseProcessor(object):
         for block in text_blocks:
 
             if not continuous_processor:
-                log(1, "Rendering diagram for block...", sequence[0])
+                log(1, "Rendering diagram for block... %s", sequence[0])
 
             try:
                 diagram = self.DIAGRAM_CLASS(self, sourceFile, block, sequence[0])
 
             except Exception as e:
                 log(1, repr(block))
-                log(1, "Error rendering diagram for block: %s" % e)
+                log(1, "Error rendering diagram for block: %s", e)
                 sys.excepthook(*sys.exc_info())
 
             sequence[0] += 1

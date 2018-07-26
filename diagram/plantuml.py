@@ -98,7 +98,7 @@ class PlantUMLDiagram(BaseDiagram):
             self._generate_server( "%s/%s/" % (server_url.strip('/'), self.output_format))
 
         except plantuml_connection.PlantUMLConnectionError as error:
-            log(1, "Failed to connect to the server: %s (%s) Falling back to local rendering..." % (error, server_url))
+            log(1, "Failed to connect to the server: %s (%s) Falling back to local rendering...", error, server_url)
             cwd, startupinfo = self._get_local_dir_info()
             self._generate_local(cwd, startupinfo)
 
@@ -127,7 +127,7 @@ class PlantUMLDiagram(BaseDiagram):
         charset = self.uml_processor.CHARSET
 
         if charset:
-            # log(1, 'using charset: ' + charset)
+            # log(1, 'using charset: %s', charset)
             command.append("-charset")
             command.append(charset)
 
@@ -136,7 +136,7 @@ class PlantUMLDiagram(BaseDiagram):
             command.append("-charset")
             command.append('UTF-8')
 
-        # log(1, "Command: %s" % (command))
+        # log(1, "Command: %s", command)
 
         puml = execute(
             command,
@@ -207,7 +207,7 @@ class PlantUMLProcessor(BaseProcessor):
         )
 
         if has_java is not 0:
-            log(1,  "PlantUMLDiagrams: ERROR, cannot find Java")
+            log(1, "PlantUMLDiagrams: ERROR, cannot find Java")
 
     def check_plantuml_functionality(self):
         puml = execute(
@@ -227,7 +227,7 @@ class PlantUMLProcessor(BaseProcessor):
         dot_output = str(stdout)
 
         if ('OK' not in dot_output) or ('Error' in dot_output):
-            log(1,  "PlantUMLDiagrams: ERROR, PlantUML does not appear functional: %s" % dot_output)
+            log(1, "PlantUMLDiagrams: ERROR, PlantUML does not appear functional: %s", dot_output)
 
     def find_plantuml_jar(self):
         self.plantuml_jar_file = 'plantuml.jar'
@@ -248,7 +248,7 @@ class PlantUMLProcessor(BaseProcessor):
             if not exists(self.plantuml_jar_path):
                 raise Exception("can't find " + self.plantuml_jar_file)
 
-        # log(1, "Detected %s" % (self.plantuml_jar_path,))
+        # log(1, "Detected %s", self.plantuml_jar_path)
 
     def check_plantuml_version(self):
         puml = execute(
@@ -267,8 +267,7 @@ class PlantUMLProcessor(BaseProcessor):
         (stdout, stderr) = puml.communicate()
         version_output = stdout
 
-        log(1, "Version Detection:")
-        log(1, version_output)
+        log(1, "Version Detection: %s", version_output)
 
         if not puml.returncode == 0:
             raise Exception("PlantUML returned an error code")

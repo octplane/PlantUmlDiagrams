@@ -43,8 +43,8 @@ def setup():
     _load_preprocessor(sublime_settings)
 
     INITIALIZED = True
-    # log(1, "Processors: %s" % ACTIVE_UML_PROCESSORS)
-    # log(1, "Viewer: %s" % ACTIVE_VIEWER)
+    # log(1, "Processors: %s", ACTIVE_UML_PROCESSORS)
+    # log(1, "Viewer: %s", ACTIVE_VIEWER)
 
 
 def _load_preprocessor(sublime_settings):
@@ -54,7 +54,7 @@ def _load_preprocessor(sublime_settings):
     def load_preprocessor():
 
         try:
-            # log(1, "Loading plantuml_processor class: %s" % plantuml_processor)
+            # log(1, "Loading plantuml_processor class: %s", plantuml_processor)
             proc = plantuml_processor()
             proc.CHARSET = sublime_settings.get('charset', None)
             proc.CHECK_ON_STARTUP = sublime_settings.get('check_on_startup', True)
@@ -63,11 +63,11 @@ def _load_preprocessor(sublime_settings):
             proc.load()
 
             ACTIVE_UML_PROCESSORS.append(proc)
-            # log(1, "Loaded plantuml_processor: %s" % proc)
+            # log(1, "Loaded plantuml_processor: %s", proc)
             return True
 
         except Exception as error:
-            log(1, "Unable to load plantuml_processor: %s, %s" % (plantuml_processor, error))
+            log(1, "Unable to load plantuml_processor: %s, %s", plantuml_processor, error)
 
         return False
 
@@ -77,19 +77,19 @@ def _load_preprocessor(sublime_settings):
             break
 
     if not ACTIVE_UML_PROCESSORS:
-        log(1,  'PlantUMLDiagrams: ERROR, no working processors found!' )
+        log(1, 'PlantUMLDiagrams: ERROR, no working processors found!' )
 
 
 def _load_viewer(sublime_settings):
     global ACTIVE_VIEWER
     ACTIVE_VIEWER = None
 
-    # log(1, "PlantUmlDiagrams Viewer Setting: " + sublime_settings.get("viewer"))
+    # log(1, "PlantUmlDiagrams Viewer Setting: %s", sublime_settings.get("viewer"))
 
     def load_viewer(message):
 
         try:
-            # log(1, "Loading viewer class: %s" % viewer)
+            # log(1, "Loading viewer class: %s", viewer)
             vwr = viewer()
             vwr.load()
 
@@ -97,14 +97,14 @@ def _load_viewer(sublime_settings):
             ACTIVE_VIEWER = vwr
 
             if not message:
-                log(1, "Loaded viewer: %s" % vwr)
+                log(1, "Loaded viewer: %s", vwr)
 
             return True
 
         except Exception as error:
 
             if message:
-                log(1, "Unable to load configured viewer %s, falling back to autodetection... %s" % (vwr, error))
+                log(1, "Unable to load configured viewer %s, falling back to autodetection... %s", vwr, error)
 
         return False
 
@@ -173,7 +173,7 @@ def process(view, continuous_processor=None):
 
 
 def render_and_view(sourceFile, diagrams, continuous_processor):
-    # log(1, "Rendering %s" % diagrams)
+    # log(1, "Rendering %s", diagrams)
     sequence = [0]
     diagram_files = []
 
@@ -187,12 +187,12 @@ def render_and_view(sourceFile, diagrams, continuous_processor):
         if continuous_processor:
 
             if continuous_processor.open_image:
-                log(1, "continuous_processor: %s viewing %s" % (ACTIVE_VIEWER, names))
+                log(1, "continuous_processor: %s viewing %s", ACTIVE_VIEWER, names)
                 ACTIVE_VIEWER.view(diagram_files)
                 continuous_processor.open_image = False
 
         else:
-            log(1, "%s viewing %s" % (ACTIVE_VIEWER, names))
+            log(1, "%s viewing %s", ACTIVE_VIEWER, names)
             ACTIVE_VIEWER.view(diagram_files)
 
     else:

@@ -31,7 +31,7 @@ log = getLogger(3, __package__)
 
 
 def process_diagram_image(view):
-    log(1, "Processing diagrams in %s..." % view.file_name())
+    log(1, "Processing diagrams in %s...", view.file_name())
 
     if not process(view):
         error_message("No diagrams overlap selections.\n\n" \
@@ -64,7 +64,7 @@ class DiagramContinueCreationThread(threading.Thread):
         default_time = 1.0
 
         while True:
-            log(4, "current_time: %s, elapsed_time: %s" % (current_time, elapsed_time))
+            log(4, "current_time: %s, elapsed_time: %s", current_time, elapsed_time)
 
             # Wait a little to not generate the diagram/image while the user is typing
             while g_is_there_new_changes:
@@ -110,7 +110,7 @@ class DisplayDiagramsContinually(TextCommand):
 
     def run(self, edit):
         view = self.view
-        log(1, "Processing diagrams in %s..." % self.view)
+        log(1, "Processing diagrams in %s...", self.view)
 
         # Force the view to the reprocessed as it associated image could have been closed
         if view.id() in all_views_active:
