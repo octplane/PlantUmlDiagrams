@@ -43,8 +43,8 @@ def setup():
     _load_preprocessor(sublime_settings)
 
     INITIALIZED = True
-    # log(1, "Processors: %s", ACTIVE_UML_PROCESSORS)
-    # log(1, "Viewer: %s", ACTIVE_VIEWER)
+    log(4, "Processors: %s", ACTIVE_UML_PROCESSORS)
+    log(4, "Viewer: %s", ACTIVE_VIEWER)
 
 
 def _load_preprocessor(sublime_settings):
@@ -54,7 +54,7 @@ def _load_preprocessor(sublime_settings):
     def load_preprocessor():
 
         try:
-            # log(1, "Loading plantuml_processor class: %s", plantuml_processor)
+            log(4, "Loading plantuml_processor class: %s", plantuml_processor)
             proc = plantuml_processor()
             proc.CHARSET = sublime_settings.get('charset', None)
             proc.CHECK_ON_STARTUP = sublime_settings.get('check_on_startup', True)
@@ -63,7 +63,7 @@ def _load_preprocessor(sublime_settings):
             proc.load()
 
             ACTIVE_UML_PROCESSORS.append(proc)
-            # log(1, "Loaded plantuml_processor: %s", proc)
+            log(4, "Loaded plantuml_processor: %s", proc)
             return True
 
         except Exception as error:
@@ -135,9 +135,11 @@ def process(view, continuous_processor=None):
         async=True
 
     for plantuml_processor in ACTIVE_UML_PROCESSORS:
+        log(4, "plantuml_processor %s", plantuml_processor)
         text_blocks = []
 
         for text_block in plantuml_processor.extract_blocks(view):
+            log(4, "text_block %s", text_block)
             add = False
 
             for selection in view.sel():

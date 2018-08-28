@@ -92,10 +92,12 @@ class PlantUMLDiagram(BaseDiagram):
 
         try:
             sublime_settings = load_settings("PlantUmlDiagrams.sublime-settings")
-            server_url = sublime_settings.get('plantuml_server', 'http://www.plantuml.com/plantuml/')
 
             # server_url = 'http://www.plantuml.com/plantuml/'
-            self._generate_server( "%s/%s/" % (server_url.strip('/'), self.output_format))
+            server_url = sublime_settings.get('plantuml_server', 'http://www.plantuml.com/plantuml/')
+
+            content = self._generate_server( "%s/%s/" % (server_url.strip('/'), self.output_format))
+            self.file.write(content)
 
         except plantuml_connection.PlantUMLConnectionError as error:
             log(1, "Failed to connect to the server: %s (%s) Falling back to local rendering...", error, server_url)
@@ -106,9 +108,8 @@ class PlantUMLDiagram(BaseDiagram):
 
     def _generate_server(self, server_url):
         plantumlserver = plantuml_connection.PlantUML(server_url)
-
         content = plantumlserver.processes(self.text.encode('utf-8'))
-        self.file.write(content)
+        return content
 
     def _generate_local(self, cwd, startupinfo):
         """
@@ -245,10 +246,7 @@ class PlantUMLProcessor(BaseProcessor):
             self.plantuml_jar_path = abspath(sublime_settings.get('jar_file'))
             self.plantuml_jar_file = basename(self.plantuml_jar_path)
 
-            if not exists(self.plantuml_jar_path):
-                raise Exception("can't find " + self.plantuml_jar_file)
-
-        # log(1, "Detected %s", self.plantuml_jar_path)
+        log(4, "Detected %s", self.plantuml_jar_path)
 
     def check_plantuml_version(self):
         puml = execute(

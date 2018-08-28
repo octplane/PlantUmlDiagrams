@@ -27,7 +27,7 @@ except NameError:
     all_views_active = {}
 
 from debug_tools import getLogger
-log = getLogger(3, __package__)
+log = getLogger(127, __package__)
 
 
 def process_diagram_image(view):
