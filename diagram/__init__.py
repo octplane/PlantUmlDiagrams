@@ -109,8 +109,17 @@ def _load_viewer(sublime_settings):
         return False
 
     for viewer in AVAILABLE_VIEWERS:
+        viewer_setting = sublime_settings.get("viewer")
 
-        if viewer.__name__.find(sublime_settings.get("viewer")) != -1:
+        if not viewer_setting:
+            print("PlantUMLDiagrams: No viewer setting found. Skipping viewer load.")
+            continue
+
+        if not viewer:
+            print("PlantUMLDiagrams: None viewer found. Skipping viewer load.")
+            continue
+
+        if viewer.__name__.find(viewer_setting) != -1:
             load_viewer(True)
             break
 
