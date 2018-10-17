@@ -145,7 +145,6 @@ else:
         """Sublime Text 3 callback to do after-loading initialization"""
         try:
             setup()
-        except Exception:
-            error_message("Unable to load diagram plugin, check console "
-                "for details.")
+        except Exception as error:
+            print("Unable to load diagram plugin, check console for details.\n\n%s" % error)
             raise
