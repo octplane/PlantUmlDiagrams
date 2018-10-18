@@ -10,7 +10,12 @@
     //
     "viewer" : "Sublime3",
 
-    "check_on_startup": true,
+    // Display diagnostic (debug) messages on Sublime Text start up, about the
+    // installation state. Possible values are:
+    // 0   - No messages
+    // 1   - Some messages
+    // 127 - All messages possible (very verbose)
+    "check_on_startup": 0,
 
     // Generate a new file each time a diagram is created, or just create the
     // diagram using the current file name as base. On this case, the file will

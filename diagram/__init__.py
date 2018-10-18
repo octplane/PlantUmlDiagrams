@@ -39,6 +39,7 @@ def setup():
     global INITIALIZED
     sublime_settings = load_settings("PlantUmlDiagrams.sublime-settings")
 
+    log._debug_level = 1 + sublime_settings.get('check_on_startup', 0)
     _load_viewer(sublime_settings)
     _load_preprocessor(sublime_settings)
 
@@ -57,7 +58,7 @@ def _load_preprocessor(sublime_settings):
             log(4, "Loading plantuml_processor class: %s", plantuml_processor)
             proc = plantuml_processor()
             proc.CHARSET = sublime_settings.get('charset', None)
-            proc.CHECK_ON_STARTUP = sublime_settings.get('check_on_startup', True)
+            proc.CHECK_ON_STARTUP = sublime_settings.get('check_on_startup', 1)
             proc.NEW_FILE = sublime_settings.get('new_file', True)
             proc.OUTPUT_FORMAT = sublime_settings.get('output_format', 'png')
             proc.load()

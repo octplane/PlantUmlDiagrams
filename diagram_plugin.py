@@ -11,23 +11,24 @@ import threading
 
 from sublime_plugin import TextCommand
 from sublime import error_message, version
+
+import plantuml_connection
+
+from debug_tools import getLogger
+log = getLogger(1, __package__)
+
 try:
     from .diagram import setup, process
 except ValueError:
     from diagram import setup, process
 
-import plantuml_connection
 g_is_there_new_changes = False
-
 
 try:
     all_views_active
 
 except NameError:
     all_views_active = {}
-
-from debug_tools import getLogger
-log = getLogger(3, __package__)
 
 
 def process_diagram_image(view):
