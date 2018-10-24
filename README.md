@@ -36,19 +36,30 @@ This version now first attempts to contact the webserver accordingly to the new 
 This is a plugin that renders diagrams from your selection in Sublime Text 2
 or 3.
 
-By default, it binds the (Command / Alt)-M key and registers a command on the
-Command Palette.  Simple select the text for your diagram and trigger the
-command.  Multiselections are allowed.  Each diagram will be generated in a
-uniquely named file.
+By default,
+a command on the Command Palette (Press `Ctrl+Shift+P` then type `PlantUmlDiagrams`).
+Simple select the text for your diagram and trigger the command.
+Multiselections are allowed.
+Each diagram will be generated in a uniquely named file.
 
-If a diagram handler recognizes a diagram in the selection, it will render it
-and pop it up in a detected viewer.  Files are rendered into the same directory
-as the source file as Portable Network Graphic files.  They will be
-automatically overwritten, but not removed.
+You can create a key bind on your user settings by going on the menu `Preferences -> Key Bindings`,
+then using the following configuration:
+```js
+[
+    {"keys": ["alt+m"], "command": "display_diagrams"}
+]
+```
 
-If you wish to override the viewer used, disable start-time sanity checks, or
-change the default character set for diagram files, create a user version of
-PlantUmlDiagrams.sublime-settings file in the usual way.
+If a diagram handler recognizes a diagram in the selection,
+it will render it and pop it up in a detected viewer.
+Files are rendered into the same directory as the source file as Portable Network Graphic files.
+They will be automatically overwritten,
+but not removed.
+
+If you wish to override the viewer used,
+disable start-time sanity checks,
+or change the default character set for diagram files,
+create a user version of PlantUmlDiagrams.sublime-settings file in the usual way.
 
 ## Install
 
