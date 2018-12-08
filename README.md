@@ -1,7 +1,7 @@
 # Plant UML Diagrams
 
 This is a forked version from https://github.com/jvantuyl/sublime_diagram_plugin adding a server dependency
-https://github.com/evandrocoan/PlantUmlConnection and rewriting the whole git history removing all the java binary files which have been added,
+https://github.com/evandrocoan/plantumlconnection and rewriting the whole git history removing all the java binary files which have been added,
 reducing the repository size from `22.49 MB` to `204 KB`.
 
 This version now first attempts to contact the webserver accordingly to the new settings:
