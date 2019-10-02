@@ -89,22 +89,31 @@ class PlantUMLDiagram(BaseDiagram):
         """
         Set the dir of sourceFile as working dir, otherwise plantuml could not include files correctly.
         """
+        sublime_settings = load_settings("PlantUmlDiagrams.sublime-settings")
 
-        try:
-            sublime_settings = load_settings("PlantUmlDiagrams.sublime-settings")
+        server_url = sublime_settings.get('plantuml_server', 'http://www.plantuml.com/plantuml/')
 
-            # server_url = 'http://www.plantuml.com/plantuml/'
-            server_url = sublime_settings.get('plantuml_server', 'http://www.plantuml.com/plantuml/')
+        if self._validate_url_syntax(server_url):
+            try:
+                content = self._generate_server( "%s/%s/" % (server_url.strip('/'), self.output_format))
+                self.file.write(content)
+                return self.file
 
-            content = self._generate_server( "%s/%s/" % (server_url.strip('/'), self.output_format))
-            self.file.write(content)
+            except plantuml_connection.PlantUMLConnectionError as error:
+                log(1, "Failed to connect to the server: %s (%s) Falling back to local rendering...", error, server_url)
+        else:
+            log(1, "Invalid plantuml_server specified, using local rendering...")
 
-        except plantuml_connection.PlantUMLConnectionError as error:
-            log(1, "Failed to connect to the server: %s (%s) Falling back to local rendering...", error, server_url)
-            cwd, startupinfo = self._get_local_dir_info()
-            self._generate_local(cwd, startupinfo)
-
+        # falling back to local generation
+        cwd, startupinfo = self._get_local_dir_info()
+        self._generate_local(cwd, startupinfo)
         return self.file
+
+    @staticmethod
+    def _validate_url_syntax(server_url):
+        from urllib.parse import urlparse
+        return urlparse(server_url).scheme.lower() in ("http", "https")
+
 
     def _generate_server(self, server_url):
         plantumlserver = plantuml_connection.PlantUML(server_url)
