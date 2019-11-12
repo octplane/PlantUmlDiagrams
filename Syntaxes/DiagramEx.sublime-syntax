@@ -63,7 +63,7 @@ contexts:
 
     # control keywords
     - match: |-
-        (?xi) ^ \s* \b (
+        (?xi) ^ \s* (
           @enduml | @startuml | activate | again | also | alt | as | autonumber | bottom | box | break |
           center | create | critical | deactivate | destroy | down | else | end | endif | endwhile | footbox |
           footer | fork | group | header | hide | if | is | left | link | loop | namespace |
