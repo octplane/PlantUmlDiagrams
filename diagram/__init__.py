@@ -5,7 +5,7 @@
 from __future__ import absolute_import
 
 from .plantuml import PlantUMLProcessor
-from .sublime3 import Sublime3Viewer
+from .sublime import SublimeViewer
 from .quicklook import QuickLookViewer
 from .preview import PreviewViewer
 from .eog import EyeOfGnomeViewer
@@ -23,7 +23,7 @@ INITIALIZED = False
 
 AVAILABLE_PROCESSORS = [PlantUMLProcessor]
 AVAILABLE_VIEWERS = [
-    Sublime3Viewer,
+    SublimeViewer,
     QuickLookViewer,
     EyeOfGnomeViewer,
     PreviewViewer,

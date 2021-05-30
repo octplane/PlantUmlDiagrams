@@ -5,13 +5,13 @@
 from .base import BaseViewer
 import sublime
 
-class Sublime3Viewer(BaseViewer):
+class SublimeViewer(BaseViewer):
 	def __str__(self):
-		return "Sublime 3 Simple Viewer"
+		return "Sublime Simple Viewer"
 
 	def load(self):
-		if not sublime.version().startswith('3'):
-			raise Exception("Not Sublime 3!")
+		if not sublime.version().startswith(('3','4')):
+			raise Exception("Sublime version not supported!")
 
 	def view(self,diagram_files):
 		for diagram_file in diagram_files:
