@@ -10,8 +10,7 @@ class Sublime3Viewer(BaseViewer):
 		return "Sublime 3 Simple Viewer"
 
 	def load(self):
-		if not sublime.version().startswith('3'):
-			raise Exception("Not Sublime 3!")
+		pass
 
 	def view(self,diagram_files):
 		for diagram_file in diagram_files:
