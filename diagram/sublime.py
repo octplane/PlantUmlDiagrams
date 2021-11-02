@@ -5,12 +5,12 @@
 from .base import BaseViewer
 import sublime
 
-class Sublime3Viewer(BaseViewer):
+class SublimeViewer(BaseViewer):
 	def __str__(self):
-		return "Sublime 3 Simple Viewer"
+		return "Sublime Simple Viewer"
 
 	def load(self):
-		pass
+       pass
 
 	def view(self,diagram_files):
 		for diagram_file in diagram_files:
