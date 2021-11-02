@@ -1,14 +1,14 @@
 {
     // restart sublime to apply the changes
     //
-    // Sublime3 - All Platforms
+    // Sublime - All Platforms
     // Preview - OSX only `open`
     // Quick Look - OSX only `qlmanage`
     // EyeOfGnome - Gnome Viewer `eog`
     // FreedesktopDefault - Linux only `xdg-open`
     // WindowsDefaultViewer - Windows Only
     //
-    "viewer" : "Sublime3",
+    "viewer" : "Sublime",
 
     // Display diagnostic (debug) messages on Sublime Text start up, about the
     // installation state. Possible values are:
