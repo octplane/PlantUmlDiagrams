@@ -42,7 +42,6 @@ def process_diagram_image(view):
 class DiagramContinueCreationThread(threading.Thread):
 
     def __init__(self, view):
-        log(1, "Starting Thread...")
         self.view = view
 
         all_views_active[view.id()] = self
@@ -66,13 +65,12 @@ class DiagramContinueCreationThread(threading.Thread):
         default_time = 1.0
 
         while True:
-            log(1, "current_time: %s, elapsed_time: %s", current_time, elapsed_time)
+            log(4, "current_time: %s, elapsed_time: %s", current_time, elapsed_time)
 
             # Wait a little to not generate the diagram/image while the user is typing
-            while not g_is_there_new_changes:
+            while g_is_there_new_changes:
+                g_is_there_new_changes = False
                 self.sleepEvent.wait( 1.0 )
-
-            g_is_there_new_changes = False
 
             # Run until it closes
             if view not in window.views():
@@ -101,6 +99,8 @@ class DiagramContinueCreationThread(threading.Thread):
                 # Allowed the image view to be focused on the first time it is opened
                 if not open_image:
                     window.focus_view( view )
+                    # window.focus_group( group )
+                    # window.focus_sheet( active_sheet )
 
                 elapsed_time = time.time() - current_time
 
@@ -108,6 +108,7 @@ class DiagramContinueCreationThread(threading.Thread):
 
 
 class DisplayDiagramsContinually(TextCommand):
+
     def run(self, edit):
         view = self.view
         log(1, "Processing diagrams in %s...", self.view)
@@ -119,13 +120,13 @@ class DisplayDiagramsContinually(TextCommand):
             continuous_processor.change_count = -1
 
         else:
-            self.continuous_thread = DiagramContinueCreationThread( view )
-            self.continuous_thread.start()
+            continuous_thread = DiagramContinueCreationThread( view )
+            continuous_thread.start()
 
 
 class DisplayDiagramsContinuallyEventListener(sublime_plugin.EventListener):
 
-    def on_pre_save_async(self, view):
+    def on_modified(self, view):
         global g_is_there_new_changes
         g_is_there_new_changes = True
 
