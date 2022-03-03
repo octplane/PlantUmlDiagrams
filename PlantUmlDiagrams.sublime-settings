@@ -53,10 +53,10 @@
     //
     // Find the server address, like: http://localhost:8080/plantuml, or
     // http://192.168.1.100:8080/plantuml which is ready for sharing to your team.
-    "plantuml_server": "http://localhost:8080/plantuml/",
+    "plantuml_server": "NOT TODAY",
 
     // The full path to the plantuml.jar file
-    "jar_file": "C:/Users/plantuml.jar",
+    "jar_file": "/usr/local/Cellar/plantuml/1.2022.1/libexec/plantuml.jar",
 
     // Can be "UTF-8" - to support non-latin text in diagram
     "charset": null
