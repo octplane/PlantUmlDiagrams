@@ -1,0 +1,1 @@
+{"dependencies": [], "platforms": ["*"], "version": "3.0.15", "description": "A fork from https://github.com/jvantuyl/sublime_diagram_plugin package for Sublime Text, to render diagrams in your source code", "sublime_text": ">=3114", "url": "https://github.com/evandrocoan/PlantUmlDiagrams"}
